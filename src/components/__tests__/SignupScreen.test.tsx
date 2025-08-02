@@ -14,8 +14,19 @@ const mockNavigation = {
   goBack: jest.fn(),
 };
 
+const mockClearError = jest.fn();
+
 jest.mock('@react-navigation/native', () => ({
   useNavigation: () => mockNavigation,
+}));
+
+// Mock the AuthContext to include clearError
+jest.mock('../../contexts/AuthContext', () => ({
+  ...jest.requireActual('../../contexts/AuthContext'),
+  useAuth: () => ({
+    ...jest.requireActual('../../contexts/AuthContext').useAuth(),
+    clearError: mockClearError,
+  }),
 }));
 
 describe('SignupScreen', () => {
@@ -364,6 +375,15 @@ describe('SignupScreen', () => {
       fireEvent.press(loginButton);
 
       expect(mockNavigation.navigate).toHaveBeenCalledWith('Login');
+    });
+
+    it('should clear error state when navigating to login', () => {
+      const { getByText } = renderSignupScreen();
+      const loginButton = getByText('Login');
+
+      fireEvent.press(loginButton);
+
+      expect(mockClearError).toHaveBeenCalled();
     });
   });
 

@@ -23,7 +23,8 @@ export const SignupScreen: React.FC = () => {
     setFieldTouched,
     passwordVisibility,
     toggleSignupPasswordVisibility,
-    validateSignupForm
+    validateSignupForm,
+    clearError
   } = useAuth();
 
   const onSignupPress = async () => {
@@ -42,6 +43,7 @@ export const SignupScreen: React.FC = () => {
   };
 
   const onLoginPress = () => {
+    clearError(); // Reset error state when navigating to login
     navigation.navigate('Login');
   };
 
