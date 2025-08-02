@@ -13,6 +13,15 @@ interface FormState {
     password: string;
     confirmPassword: string;
   };
+  passwordVisibility: {
+    login: {
+      password: boolean;
+    };
+    signup: {
+      password: boolean;
+      confirmPassword: boolean;
+    };
+  };
   touchedFields: {
     login: {
       email: boolean;
@@ -96,6 +105,15 @@ export const useAuthViewModel = () => {
       email: '',
       password: '',
       confirmPassword: '',
+    },
+    passwordVisibility: {
+      login: {
+        password: false,
+      },
+      signup: {
+        password: false,
+        confirmPassword: false,
+      },
     },
     touchedFields: {
       login: {
@@ -189,12 +207,43 @@ export const useAuthViewModel = () => {
     }));
   }, []);
 
+  const toggleLoginPasswordVisibility = useCallback(() => {
+    setFormState(prev => ({
+      ...prev,
+      passwordVisibility: {
+        ...prev.passwordVisibility,
+        login: {
+          password: !prev.passwordVisibility.login.password,
+        },
+      },
+    }));
+  }, []);
+
+  const toggleSignupPasswordVisibility = useCallback((field: 'password' | 'confirmPassword') => {
+    setFormState(prev => ({
+      ...prev,
+      passwordVisibility: {
+        ...prev.passwordVisibility,
+        signup: {
+          ...prev.passwordVisibility.signup,
+          [field]: !prev.passwordVisibility.signup[field],
+        },
+      },
+    }));
+  }, []);
+
   const clearLoginForm = useCallback(() => {
     setFormState(prev => ({
       ...prev,
       login: {
         email: '',
         password: '',
+      },
+      passwordVisibility: {
+        ...prev.passwordVisibility,
+        login: {
+          password: false,
+        },
       },
       touchedFields: {
         ...prev.touchedFields,
@@ -214,6 +263,13 @@ export const useAuthViewModel = () => {
         email: '',
         password: '',
         confirmPassword: '',
+      },
+      passwordVisibility: {
+        ...prev.passwordVisibility,
+        signup: {
+          password: false,
+          confirmPassword: false,
+        },
       },
       touchedFields: {
         ...prev.touchedFields,
@@ -348,6 +404,7 @@ export const useAuthViewModel = () => {
     loginForm: formState.login,
     signupForm: formState.signup,
     touchedFields: formState.touchedFields,
+    passwordVisibility: formState.passwordVisibility,
 
     // Actions
     login,
@@ -361,6 +418,8 @@ export const useAuthViewModel = () => {
     clearSignupForm,
     setFieldTouched,
     clearTouchedFields,
+    toggleLoginPasswordVisibility,
+    toggleSignupPasswordVisibility,
     handleLogin,
     handleSignup,
   }), [
@@ -371,6 +430,7 @@ export const useAuthViewModel = () => {
     formState.login,
     formState.signup,
     formState.touchedFields,
+    formState.passwordVisibility,
     login, 
     signup, 
     logout, 
@@ -382,6 +442,8 @@ export const useAuthViewModel = () => {
     clearSignupForm,
     setFieldTouched,
     clearTouchedFields,
+    toggleLoginPasswordVisibility,
+    toggleSignupPasswordVisibility,
     handleLogin,
     handleSignup,
   ]);

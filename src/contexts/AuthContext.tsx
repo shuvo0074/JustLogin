@@ -16,6 +16,10 @@ interface AuthContextType {
     login: { email: boolean; password: boolean };
     signup: { name: boolean; email: boolean; password: boolean; confirmPassword: boolean };
   };
+  passwordVisibility: {
+    login: { password: boolean };
+    signup: { password: boolean; confirmPassword: boolean };
+  };
 
   // Actions
   login: (credentials: LoginCredentials) => Promise<any>;
@@ -28,6 +32,8 @@ interface AuthContextType {
   clearSignupForm: () => void;
   setFieldTouched: (formType: 'login' | 'signup', field: string, touched?: boolean) => void;
   clearTouchedFields: (formType: 'login' | 'signup') => void;
+  toggleLoginPasswordVisibility: () => void;
+  toggleSignupPasswordVisibility: (field: 'password' | 'confirmPassword') => void;
   handleLogin: () => Promise<any>;
   handleSignup: () => Promise<any>;
 }
@@ -62,6 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loginForm: authViewModel.loginForm,
     signupForm: authViewModel.signupForm,
     touchedFields: authViewModel.touchedFields,
+    passwordVisibility: authViewModel.passwordVisibility,
 
     // Actions
     login: authViewModel.login,
@@ -74,6 +81,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     clearSignupForm: authViewModel.clearSignupForm,
     setFieldTouched: authViewModel.setFieldTouched,
     clearTouchedFields: authViewModel.clearTouchedFields,
+    toggleLoginPasswordVisibility: authViewModel.toggleLoginPasswordVisibility,
+    toggleSignupPasswordVisibility: authViewModel.toggleSignupPasswordVisibility,
     handleLogin: authViewModel.handleLogin,
     handleSignup: authViewModel.handleSignup,
   };

@@ -14,14 +14,16 @@ import { AuthStackNavigationProp } from '../types/navigation';
 
 export const SignupScreen: React.FC = () => {
   const navigation = useNavigation<AuthStackNavigationProp>();
-  const { 
-    handleSignup, 
-    isLoading, 
-    error, 
-    signupForm, 
+  const {
+    handleSignup,
+    isLoading,
+    error,
+    signupForm,
     updateSignupForm,
     touchedFields,
-    setFieldTouched
+    setFieldTouched,
+    passwordVisibility,
+    toggleSignupPasswordVisibility
   } = useAuth();
 
   const onSignupPress = async () => {
@@ -49,7 +51,7 @@ export const SignupScreen: React.FC = () => {
   const getInputStyle = (field: 'name' | 'email' | 'password' | 'confirmPassword') => {
     const isTouched = touchedFields.signup[field];
     const hasValue = signupForm[field].trim().length > 0;
-    
+
     if (isTouched && !hasValue) {
       return [styles.input, styles.inputError];
     }
@@ -60,7 +62,7 @@ export const SignupScreen: React.FC = () => {
     const isTouched = touchedFields.signup.confirmPassword;
     const hasValue = signupForm.confirmPassword.trim().length > 0;
     const passwordsMatch = signupForm.password === signupForm.confirmPassword;
-    
+
     if (isTouched && hasValue && !passwordsMatch) {
       return [styles.input, styles.inputError];
     }
@@ -70,7 +72,7 @@ export const SignupScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create Account</Text>
-      
+
       {error && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
@@ -96,23 +98,43 @@ export const SignupScreen: React.FC = () => {
         onBlur={() => setFieldTouched('signup', 'email')}
       />
 
-      <TextInput
-        style={getInputStyle('password')}
-        placeholder="Password"
-        value={signupForm.password}
-        onChangeText={(value) => handleFieldChange('password', value)}
-        secureTextEntry
-        onBlur={() => setFieldTouched('signup', 'password')}
-      />
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={[getInputStyle('password'), styles.passwordInput]}
+          placeholder="Password"
+          value={signupForm.password}
+          onChangeText={(value) => handleFieldChange('password', value)}
+          secureTextEntry={!passwordVisibility.signup.password}
+          onBlur={() => setFieldTouched('signup', 'password')}
+        />
+        <TouchableOpacity
+          style={styles.eyeButton}
+          onPress={() => toggleSignupPasswordVisibility('password')}
+        >
+          <Text style={styles.eyeIcon}>
+            {passwordVisibility.signup.password ? '🙉' : '🙈'}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-      <TextInput
-        style={getPasswordMatchStyle()}
-        placeholder="Confirm Password"
-        value={signupForm.confirmPassword}
-        onChangeText={(value) => handleFieldChange('confirmPassword', value)}
-        secureTextEntry
-        onBlur={() => setFieldTouched('signup', 'confirmPassword')}
-      />
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={[getPasswordMatchStyle(), styles.passwordInput]}
+          placeholder="Confirm Password"
+          value={signupForm.confirmPassword}
+          onChangeText={(value) => handleFieldChange('confirmPassword', value)}
+          secureTextEntry={!passwordVisibility.signup.confirmPassword}
+          onBlur={() => setFieldTouched('signup', 'confirmPassword')}
+        />
+        <TouchableOpacity
+          style={styles.eyeButton}
+          onPress={() => toggleSignupPasswordVisibility('confirmPassword')}
+        >
+          <Text style={styles.eyeIcon}>
+            {passwordVisibility.signup.confirmPassword ? '🙉' : '🙈'}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity
         style={[styles.button, isLoading && styles.buttonDisabled]}
@@ -163,6 +185,23 @@ const styles = StyleSheet.create({
   inputError: {
     borderColor: '#f44336',
     borderWidth: 2,
+  },
+  passwordContainer: {
+    position: 'relative',
+    marginBottom: 15,
+  },
+  passwordInput: {
+    paddingRight: 50,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 15,
+    top: 15,
+    padding: 5,
+  },
+  eyeIcon: {
+    fontSize: 20,
+    marginTop: -8,
   },
   button: {
     backgroundColor: '#007AFF',

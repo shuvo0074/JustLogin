@@ -14,14 +14,16 @@ import { AuthStackNavigationProp } from '../types/navigation';
 
 export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<AuthStackNavigationProp>();
-  const { 
-    handleLogin, 
-    isLoading, 
-    error, 
-    loginForm, 
+  const {
+    handleLogin,
+    isLoading,
+    error,
+    loginForm,
     updateLoginForm,
     touchedFields,
-    setFieldTouched
+    setFieldTouched,
+    passwordVisibility,
+    toggleLoginPasswordVisibility
   } = useAuth();
 
   const onLoginPress = async () => {
@@ -49,7 +51,7 @@ export const LoginScreen: React.FC = () => {
   const getInputStyle = (field: 'email' | 'password') => {
     const isTouched = touchedFields.login[field];
     const hasValue = loginForm[field].trim().length > 0;
-    
+
     if (isTouched && !hasValue) {
       return [styles.input, styles.inputError];
     }
@@ -59,7 +61,7 @@ export const LoginScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
-      
+
       {error && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
@@ -76,14 +78,24 @@ export const LoginScreen: React.FC = () => {
         onBlur={() => setFieldTouched('login', 'email')}
       />
 
-      <TextInput
-        style={getInputStyle('password')}
-        placeholder="Password"
-        value={loginForm.password}
-        onChangeText={(value) => handleFieldChange('password', value)}
-        secureTextEntry
-        onBlur={() => setFieldTouched('login', 'password')}
-      />
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={[getInputStyle('password'), styles.passwordInput]}
+          placeholder="Password"
+          value={loginForm.password}
+          onChangeText={(value) => handleFieldChange('password', value)}
+          secureTextEntry={!passwordVisibility.login.password}
+          onBlur={() => setFieldTouched('login', 'password')}
+        />
+        <TouchableOpacity
+          style={styles.eyeButton}
+          onPress={toggleLoginPasswordVisibility}
+        >
+          <Text style={styles.eyeIcon}>
+            {passwordVisibility.login.password ? '🙉' : '🙈'}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <TouchableOpacity
         style={[styles.button, isLoading && styles.buttonDisabled]}
@@ -138,6 +150,23 @@ const styles = StyleSheet.create({
   inputError: {
     borderColor: '#f44336',
     borderWidth: 2,
+  },
+  passwordContainer: {
+    position: 'relative',
+    marginBottom: 15,
+  },
+  passwordInput: {
+    paddingRight: 50,
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 15,
+    top: 15,
+    padding: 5,
+  },
+  eyeIcon: {
+    fontSize: 20,
+    marginTop: -8,
   },
   button: {
     backgroundColor: '#007AFF',
