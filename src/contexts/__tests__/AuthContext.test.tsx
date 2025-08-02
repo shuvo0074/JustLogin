@@ -303,22 +303,20 @@ describe('AuthContext', () => {
       expect(getByTestId('error').props.children).toBe('no-error');
     });
 
-    it('should provide password visibility toggle', () => {
+    it('should provide password visibility functionality', () => {
       const TestPasswordComponent: React.FC = () => {
         const auth = useAuth();
         return (
           <View>
-            <Text testID="passwordVisibility">
-              {JSON.stringify(auth.passwordVisibility)}
-            </Text>
-            <TouchableOpacity testID="toggle-login" onPress={() => auth.toggleLoginPasswordVisibility()}>
+            <Text testID="passwordVisibility">{JSON.stringify(auth.passwordVisibility)}</Text>
+            <TouchableOpacity testID="toggle-login" onPress={auth.toggleLoginPasswordVisibility}>
               <Text>Toggle Login</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              testID="toggle-signup"
-              onPress={() => auth.toggleSignupPasswordVisibility('password')}
-            >
-              <Text>Toggle Signup</Text>
+            <TouchableOpacity testID="toggle-signup-password" onPress={() => auth.toggleSignupPasswordVisibility('password')}>
+              <Text>Toggle Signup Password</Text>
+            </TouchableOpacity>
+            <TouchableOpacity testID="toggle-signup-confirm" onPress={() => auth.toggleSignupPasswordVisibility('confirmPassword')}>
+              <Text>Toggle Signup Confirm</Text>
             </TouchableOpacity>
           </View>
         );
@@ -343,54 +341,19 @@ describe('AuthContext', () => {
       );
 
       act(() => {
-        getByTestId('toggle-signup').props.onPress();
+        getByTestId('toggle-signup-password').props.onPress();
       });
 
       expect(getByTestId('passwordVisibility').props.children).toBe(
         '{"login":{"password":true},"signup":{"password":true,"confirmPassword":false}}'
       );
-    });
-
-    it('should provide touched fields functionality', () => {
-      const TestTouchedComponent: React.FC = () => {
-        const auth = useAuth();
-        return (
-          <View>
-            <Text testID="touchedFields">{JSON.stringify(auth.touchedFields)}</Text>
-            <TouchableOpacity testID="set-touched" onPress={() => auth.setFieldTouched('login', 'email')}>
-              <Text>Set Touched</Text>
-            </TouchableOpacity>
-            <TouchableOpacity testID="clear-touched" onPress={() => auth.clearTouchedFields('login')}>
-              <Text>Clear Touched</Text>
-            </TouchableOpacity>
-          </View>
-        );
-      };
-
-      const { getByTestId } = render(
-        <AuthProvider>
-          <TestTouchedComponent />
-        </AuthProvider>
-      );
-
-      expect(getByTestId('touchedFields').props.children).toBe(
-        '{"login":{"email":false,"password":false},"signup":{"name":false,"email":false,"password":false,"confirmPassword":false}}'
-      );
 
       act(() => {
-        getByTestId('set-touched').props.onPress();
+        getByTestId('toggle-signup-confirm').props.onPress();
       });
 
-      expect(getByTestId('touchedFields').props.children).toBe(
-        '{"login":{"email":true,"password":false},"signup":{"name":false,"email":false,"password":false,"confirmPassword":false}}'
-      );
-
-      act(() => {
-        getByTestId('clear-touched').props.onPress();
-      });
-
-      expect(getByTestId('touchedFields').props.children).toBe(
-        '{"login":{"email":false,"password":false},"signup":{"name":false,"email":false,"password":false,"confirmPassword":false}}'
+      expect(getByTestId('passwordVisibility').props.children).toBe(
+        '{"login":{"password":true},"signup":{"password":true,"confirmPassword":true}}'
       );
     });
   });

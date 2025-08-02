@@ -19,8 +19,6 @@ export const SignupScreen: React.FC = () => {
     error,
     signupForm,
     updateSignupForm,
-    touchedFields,
-    setFieldTouched,
     passwordVisibility,
     toggleSignupPasswordVisibility,
     validateSignupForm,
@@ -28,12 +26,6 @@ export const SignupScreen: React.FC = () => {
   } = useAuth();
 
   const onSignupPress = async () => {
-    // Trigger validation for all fields
-    setFieldTouched('signup', 'name', true);
-    setFieldTouched('signup', 'email', true);
-    setFieldTouched('signup', 'password', true);
-    setFieldTouched('signup', 'confirmPassword', true);
-
     try {
       const response = await handleSignup();
       // Signup success is handled by the ViewModel
@@ -51,27 +43,6 @@ export const SignupScreen: React.FC = () => {
     updateSignupForm(field, value);
   };
 
-  const getInputStyle = (field: 'name' | 'email' | 'password' | 'confirmPassword') => {
-    const isTouched = touchedFields.signup[field];
-    const hasValue = signupForm[field].trim().length > 0;
-
-    if (isTouched && !hasValue) {
-      return [styles.input, styles.inputError];
-    }
-    return styles.input;
-  };
-
-  const getPasswordMatchStyle = () => {
-    const isTouched = touchedFields.signup.confirmPassword;
-    const hasValue = signupForm.confirmPassword.trim().length > 0;
-    const passwordsMatch = signupForm.password === signupForm.confirmPassword;
-
-    if (isTouched && hasValue && !passwordsMatch) {
-      return [styles.input, styles.inputError];
-    }
-    return styles.input;
-  };
-
   return (
     <View style={styles.container} testID="screen-Signup">
       <Text style={styles.title}>Create Account</Text>
@@ -83,32 +54,29 @@ export const SignupScreen: React.FC = () => {
       )}
 
       <TextInput
-        style={getInputStyle('name')}
+        style={styles.input}
         placeholder="Full Name"
         value={signupForm.name}
         onChangeText={(value) => handleFieldChange('name', value)}
         autoCapitalize="words"
-        onBlur={() => setFieldTouched('signup', 'name')}
       />
 
       <TextInput
-        style={getInputStyle('email')}
+        style={styles.input}
         placeholder="Email"
         value={signupForm.email}
         onChangeText={(value) => handleFieldChange('email', value)}
         keyboardType="email-address"
         autoCapitalize="none"
-        onBlur={() => setFieldTouched('signup', 'email')}
       />
 
       <View style={styles.passwordContainer}>
         <TextInput
-          style={[getInputStyle('password'), styles.passwordInput]}
+          style={[styles.input, styles.passwordInput]}
           placeholder="Password"
           value={signupForm.password}
           onChangeText={(value) => handleFieldChange('password', value)}
           secureTextEntry={!passwordVisibility.signup.password}
-          onBlur={() => setFieldTouched('signup', 'password')}
         />
         <TouchableOpacity
           style={styles.eyeButton}
@@ -122,12 +90,11 @@ export const SignupScreen: React.FC = () => {
 
       <View style={styles.passwordContainer}>
         <TextInput
-          style={[getPasswordMatchStyle(), styles.passwordInput]}
+          style={[styles.input, styles.passwordInput]}
           placeholder="Confirm Password"
           value={signupForm.confirmPassword}
           onChangeText={(value) => handleFieldChange('confirmPassword', value)}
           secureTextEntry={!passwordVisibility.signup.confirmPassword}
-          onBlur={() => setFieldTouched('signup', 'confirmPassword')}
         />
         <TouchableOpacity
           style={styles.eyeButton}

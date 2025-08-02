@@ -30,10 +30,6 @@ describe('useAuthViewModel', () => {
         password: '',
         confirmPassword: '',
       });
-      expect(result.current.touchedFields).toEqual({
-        login: { email: false, password: false },
-        signup: { name: false, email: false, password: false, confirmPassword: false },
-      });
       expect(result.current.passwordVisibility).toEqual({
         login: { password: false },
         signup: { password: false, confirmPassword: false },
@@ -50,7 +46,6 @@ describe('useAuthViewModel', () => {
       });
 
       expect(result.current.loginForm.email).toBe('test@example.com');
-      expect(result.current.touchedFields.login.email).toBe(true);
     });
 
     it('should update signup form correctly', () => {
@@ -61,7 +56,6 @@ describe('useAuthViewModel', () => {
       });
 
       expect(result.current.signupForm.name).toBe('Test User');
-      expect(result.current.touchedFields.signup.name).toBe(true);
     });
 
     it('should clear login form correctly', () => {
@@ -81,10 +75,6 @@ describe('useAuthViewModel', () => {
       expect(result.current.loginForm).toEqual({
         email: '',
         password: '',
-      });
-      expect(result.current.touchedFields.login).toEqual({
-        email: false,
-        password: false,
       });
       expect(result.current.passwordVisibility.login).toEqual({
         password: false,
@@ -110,12 +100,6 @@ describe('useAuthViewModel', () => {
         email: '',
         password: '',
         confirmPassword: '',
-      });
-      expect(result.current.touchedFields.signup).toEqual({
-        name: false,
-        email: false,
-        password: false,
-        confirmPassword: false,
       });
       expect(result.current.passwordVisibility.signup).toEqual({
         password: false,
@@ -162,39 +146,6 @@ describe('useAuthViewModel', () => {
 
       expect(result.current.passwordVisibility.signup.password).toBe(true);
       expect(result.current.passwordVisibility.signup.confirmPassword).toBe(true);
-    });
-  });
-
-  describe('touched fields', () => {
-    it('should set field touched correctly', () => {
-      const { result } = renderHook(() => useAuthViewModel());
-
-      act(() => {
-        result.current.setFieldTouched('login', 'email');
-      });
-
-      expect(result.current.touchedFields.login.email).toBe(true);
-      expect(result.current.touchedFields.login.password).toBe(false);
-    });
-
-    it('should clear touched fields correctly', () => {
-      const { result } = renderHook(() => useAuthViewModel());
-
-      // First set some fields as touched
-      act(() => {
-        result.current.setFieldTouched('login', 'email');
-        result.current.setFieldTouched('login', 'password');
-      });
-
-      // Then clear them
-      act(() => {
-        result.current.clearTouchedFields('login');
-      });
-
-      expect(result.current.touchedFields.login).toEqual({
-        email: false,
-        password: false,
-      });
     });
   });
 

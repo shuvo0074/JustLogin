@@ -417,44 +417,4 @@ describe('SignupScreen', () => {
       expect(signupButton).toBeTruthy();
     });
   });
-
-  describe('Input styling', () => {
-    it('should apply error styling to invalid fields', () => {
-      const { getByPlaceholderText } = renderSignupScreen();
-      const nameInput = getByPlaceholderText('Full Name');
-
-      // Trigger validation error
-      fireEvent(nameInput, 'blur');
-
-      // For now, just check that the input exists
-      expect(nameInput).toBeTruthy();
-    });
-
-    it('should apply normal styling to valid fields', () => {
-      const { getByPlaceholderText } = renderSignupScreen();
-      const nameInput = getByPlaceholderText('Full Name');
-
-      // Fill with valid data
-      fireEvent.changeText(nameInput, 'John Doe');
-      fireEvent(nameInput, 'blur');
-
-      // For now, just check that the input exists
-      expect(nameInput).toBeTruthy();
-    });
-
-    it('should apply error styling to mismatched passwords', () => {
-      const { getByPlaceholderText } = renderSignupScreen();
-      const passwordInput = getByPlaceholderText('Password');
-      const confirmPasswordInput = getByPlaceholderText('Confirm Password');
-
-      // Fill with mismatched passwords
-      fireEvent.changeText(passwordInput, 'password123');
-      fireEvent.changeText(confirmPasswordInput, 'differentpassword');
-      fireEvent(confirmPasswordInput, 'blur');
-
-      // For now, just check that the inputs exist
-      expect(passwordInput).toBeTruthy();
-      expect(confirmPasswordInput).toBeTruthy();
-    });
-  });
 }); 

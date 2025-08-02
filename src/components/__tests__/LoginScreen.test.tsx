@@ -297,33 +297,4 @@ describe('LoginScreen', () => {
       expect(getByText('Login')).toBeTruthy();
     });
   });
-
-  describe('Input styling', () => {
-    it('should apply error styling to invalid fields', () => {
-      const { getByPlaceholderText } = renderLoginScreen();
-      const emailInput = getByPlaceholderText('Email');
-
-      // Trigger validation error
-      fireEvent(emailInput, 'blur');
-
-      // Check if error styling is applied
-      expect(emailInput.props.style).toContainEqual(
-        expect.objectContaining({ borderColor: '#f44336' })
-      );
-    });
-
-    it('should apply normal styling to valid fields', () => {
-      const { getByPlaceholderText } = renderLoginScreen();
-      const emailInput = getByPlaceholderText('Email');
-
-      // Fill with valid data
-      fireEvent.changeText(emailInput, 'test@example.com');
-      fireEvent(emailInput, 'blur');
-
-      // Check if normal styling is applied
-      expect(emailInput.props.style).not.toContainEqual(
-        expect.objectContaining({ borderColor: '#f44336' })
-      );
-    });
-  });
 }); 

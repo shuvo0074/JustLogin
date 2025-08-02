@@ -19,18 +19,12 @@ export const LoginScreen: React.FC = () => {
     error,
     loginForm,
     updateLoginForm,
-    touchedFields,
-    setFieldTouched,
     passwordVisibility,
     toggleLoginPasswordVisibility,
     clearError,
   } = useAuth();
 
   const onLoginPress = async () => {
-    // Trigger validation for all fields
-    setFieldTouched('login', 'email', true);
-    setFieldTouched('login', 'password', true);
-
     try {
       const response = await handleLogin();
       // Login success is handled by the ViewModel
@@ -48,16 +42,6 @@ export const LoginScreen: React.FC = () => {
     updateLoginForm(field, value);
   };
 
-  const getInputStyle = (field: 'email' | 'password') => {
-    const isTouched = touchedFields.login[field];
-    const hasValue = loginForm[field].trim().length > 0;
-
-    if (isTouched && !hasValue) {
-      return [styles.input, styles.inputError];
-    }
-    return styles.input;
-  };
-
   return (
     <View style={styles.container} testID="screen-Login">
       <Text style={styles.title}>Login</Text>
@@ -69,23 +53,21 @@ export const LoginScreen: React.FC = () => {
       )}
 
       <TextInput
-        style={getInputStyle('email')}
+        style={styles.input}
         placeholder="Email"
         value={loginForm.email}
         onChangeText={(value) => handleFieldChange('email', value)}
         keyboardType="email-address"
         autoCapitalize="none"
-        onBlur={() => setFieldTouched('login', 'email')}
       />
 
       <View style={styles.passwordContainer}>
         <TextInput
-          style={[getInputStyle('password'), styles.passwordInput]}
+          style={[styles.input, styles.passwordInput]}
           placeholder="Password"
           value={loginForm.password}
           onChangeText={(value) => handleFieldChange('password', value)}
           secureTextEntry={!passwordVisibility.login.password}
-          onBlur={() => setFieldTouched('login', 'password')}
         />
         <TouchableOpacity
           style={styles.eyeButton}

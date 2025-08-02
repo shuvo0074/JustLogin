@@ -22,18 +22,6 @@ interface FormState {
       confirmPassword: boolean;
     };
   };
-  touchedFields: {
-    login: {
-      email: boolean;
-      password: boolean;
-    };
-    signup: {
-      name: boolean;
-      email: boolean;
-      password: boolean;
-      confirmPassword: boolean;
-    };
-  };
 }
 
 // Validation functions
@@ -115,18 +103,6 @@ export const useAuthViewModel = () => {
         confirmPassword: false,
       },
     },
-    touchedFields: {
-      login: {
-        email: false,
-        password: false,
-      },
-      signup: {
-        name: false,
-        email: false,
-        password: false,
-        confirmPassword: false,
-      },
-    },
   });
 
   const setLoading = useCallback((isLoading: boolean) => {
@@ -155,54 +131,15 @@ export const useAuthViewModel = () => {
         ...prev.login,
         [field]: value,
       },
-      touchedFields: {
-        ...prev.touchedFields,
-        login: {
-          ...prev.touchedFields.login,
-          [field]: true,
-        },
-      },
     }));
   }, []);
 
-  const updateSignupForm = useCallback((field: keyof FormState['signup'], value: string) => {
+  const updateSignupForm = useCallback((field: 'name' | 'email' | 'password' | 'confirmPassword', value: string) => {
     setFormState(prev => ({
       ...prev,
       signup: {
         ...prev.signup,
         [field]: value,
-      },
-      touchedFields: {
-        ...prev.touchedFields,
-        signup: {
-          ...prev.touchedFields.signup,
-          [field]: true,
-        },
-      },
-    }));
-  }, []);
-
-  const setFieldTouched = useCallback((formType: 'login' | 'signup', field: string, touched: boolean = true) => {
-    setFormState(prev => ({
-      ...prev,
-      touchedFields: {
-        ...prev.touchedFields,
-        [formType]: {
-          ...prev.touchedFields[formType],
-          [field]: touched,
-        },
-      },
-    }));
-  }, []);
-
-  const clearTouchedFields = useCallback((formType: 'login' | 'signup') => {
-    setFormState(prev => ({
-      ...prev,
-      touchedFields: {
-        ...prev.touchedFields,
-        [formType]: formType === 'login'
-          ? { email: false, password: false }
-          : { name: false, email: false, password: false, confirmPassword: false },
       },
     }));
   }, []);
@@ -245,13 +182,6 @@ export const useAuthViewModel = () => {
           password: false,
         },
       },
-      touchedFields: {
-        ...prev.touchedFields,
-        login: {
-          email: false,
-          password: false,
-        },
-      },
     }));
   }, []);
 
@@ -267,15 +197,6 @@ export const useAuthViewModel = () => {
       passwordVisibility: {
         ...prev.passwordVisibility,
         signup: {
-          password: false,
-          confirmPassword: false,
-        },
-      },
-      touchedFields: {
-        ...prev.touchedFields,
-        signup: {
-          name: false,
-          email: false,
           password: false,
           confirmPassword: false,
         },
@@ -372,14 +293,12 @@ export const useAuthViewModel = () => {
       await authService.logout();
       setUser(null);
       // Reset touched fields after logout
-      clearTouchedFields('login');
-      clearTouchedFields('signup');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Logout failed';
       setError(errorMessage);
       throw error;
     }
-  }, [setLoading, setUser, setError, clearTouchedFields]);
+  }, [setLoading, setUser, setError]);
 
   const checkAuthStatus = useCallback(async () => {
     try {
@@ -405,7 +324,6 @@ export const useAuthViewModel = () => {
     // Form State
     loginForm: formState.login,
     signupForm: formState.signup,
-    touchedFields: formState.touchedFields,
     passwordVisibility: formState.passwordVisibility,
 
     // Validation functions
@@ -425,8 +343,6 @@ export const useAuthViewModel = () => {
     updateSignupForm,
     clearLoginForm,
     clearSignupForm,
-    setFieldTouched,
-    clearTouchedFields,
     toggleLoginPasswordVisibility,
     toggleSignupPasswordVisibility,
     handleLogin,
@@ -439,7 +355,6 @@ export const useAuthViewModel = () => {
     state.isAuthenticated,
     formState.login,
     formState.signup,
-    formState.touchedFields,
     formState.passwordVisibility,
     login,
     signup,
@@ -451,8 +366,6 @@ export const useAuthViewModel = () => {
     updateSignupForm,
     clearLoginForm,
     clearSignupForm,
-    setFieldTouched,
-    clearTouchedFields,
     toggleLoginPasswordVisibility,
     toggleSignupPasswordVisibility,
     handleLogin,

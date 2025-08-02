@@ -12,10 +12,6 @@ interface AuthContextType {
   // Form State
   loginForm: { email: string; password: string };
   signupForm: { name: string; email: string; password: string; confirmPassword: string };
-  touchedFields: {
-    login: { email: boolean; password: boolean };
-    signup: { name: boolean; email: boolean; password: boolean; confirmPassword: boolean };
-  };
   passwordVisibility: {
     login: { password: boolean };
     signup: { password: boolean; confirmPassword: boolean };
@@ -37,8 +33,6 @@ interface AuthContextType {
   updateSignupForm: (field: 'name' | 'email' | 'password' | 'confirmPassword', value: string) => void;
   clearLoginForm: () => void;
   clearSignupForm: () => void;
-  setFieldTouched: (formType: 'login' | 'signup', field: string, touched?: boolean) => void;
-  clearTouchedFields: (formType: 'login' | 'signup') => void;
   toggleLoginPasswordVisibility: () => void;
   toggleSignupPasswordVisibility: (field: 'password' | 'confirmPassword') => void;
   handleLogin: () => Promise<any>;
@@ -74,7 +68,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Form State
     loginForm: authViewModel.loginForm,
     signupForm: authViewModel.signupForm,
-    touchedFields: authViewModel.touchedFields,
     passwordVisibility: authViewModel.passwordVisibility,
 
     // Validation functions
@@ -93,8 +86,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     updateSignupForm: authViewModel.updateSignupForm,
     clearLoginForm: authViewModel.clearLoginForm,
     clearSignupForm: authViewModel.clearSignupForm,
-    setFieldTouched: authViewModel.setFieldTouched,
-    clearTouchedFields: authViewModel.clearTouchedFields,
     toggleLoginPasswordVisibility: authViewModel.toggleLoginPasswordVisibility,
     toggleSignupPasswordVisibility: authViewModel.toggleSignupPasswordVisibility,
     handleLogin: authViewModel.handleLogin,
