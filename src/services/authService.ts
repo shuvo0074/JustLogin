@@ -1,0 +1,152 @@
+import { LoginCredentials, SignupCredentials, AuthResponse, User } from '../types/auth';
+
+// Mock API service - replace with actual API calls
+class AuthService {
+  private baseUrl = 'https://api.example.com/auth'; // Replace with your actual API URL
+  private tokenKey = 'auth_token';
+  private userKey = 'user_data';
+
+  // Simulate API delay
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Store token in AsyncStorage (in real app, use @react-native-async-storage/async-storage)
+  private async storeToken(token: string): Promise<void> {
+    // In a real app, use AsyncStorage.setItem(this.tokenKey, token);
+    console.log('Token stored:', token);
+  }
+
+  // Get token from storage
+  private async getStoredToken(): Promise<string | null> {
+    // In a real app, use AsyncStorage.getItem(this.tokenKey);
+    return null;
+  }
+
+  // Store user data
+  private async storeUser(user: User): Promise<void> {
+    // In a real app, use AsyncStorage.setItem(this.userKey, JSON.stringify(user));
+    console.log('User stored:', user);
+  }
+
+  // Get stored user data
+  private async getStoredUser(): Promise<User | null> {
+    // In a real app, use AsyncStorage.getItem(this.userKey);
+    return null;
+  }
+
+  // Clear stored data
+  private async clearStoredData(): Promise<void> {
+    // In a real app, use AsyncStorage.multiRemove([this.tokenKey, this.userKey]);
+    console.log('Stored data cleared');
+  }
+
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    try {
+      // Simulate API call
+      await this.delay(1000);
+
+      // Mock validation
+      if (credentials.email === 'test@example.com' && credentials.password === 'password') {
+        const mockUser: User = {
+          id: '1',
+          email: credentials.email,
+          name: 'Test User',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        const mockToken = 'mock_jwt_token_' + Date.now();
+
+        const response: AuthResponse = {
+          user: mockUser,
+          token: mockToken,
+        };
+
+        // Store authentication data
+        await this.storeToken(mockToken);
+        await this.storeUser(mockUser);
+
+        return response;
+      } else {
+        throw new Error('Invalid credentials');
+      }
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : 'Login failed');
+    }
+  }
+
+  async signup(credentials: SignupCredentials): Promise<AuthResponse> {
+    try {
+      // Simulate API call
+      await this.delay(1000);
+
+      // Mock user creation
+      const mockUser: User = {
+        id: Date.now().toString(),
+        email: credentials.email,
+        name: credentials.name,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const mockToken = 'mock_jwt_token_' + Date.now();
+
+      const response: AuthResponse = {
+        user: mockUser,
+        token: mockToken,
+      };
+
+      // Store authentication data
+      await this.storeToken(mockToken);
+      await this.storeUser(mockUser);
+
+      return response;
+    } catch (error) {
+      throw new Error(error instanceof Error ? error.message : 'Signup failed');
+    }
+  }
+
+  async logout(): Promise<void> {
+    try {
+      // Simulate API call
+      await this.delay(500);
+
+      // Clear stored data
+      await this.clearStoredData();
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Still clear stored data even if API call fails
+      await this.clearStoredData();
+    }
+  }
+
+  async getCurrentUser(): Promise<User | null> {
+    try {
+      const token = await this.getStoredToken();
+      const user = await this.getStoredUser();
+
+      if (token && user) {
+        // In a real app, you might want to validate the token with the server
+        return user;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Get current user error:', error);
+      return null;
+    }
+  }
+
+  async validateToken(): Promise<boolean> {
+    try {
+      const token = await this.getStoredToken();
+      return !!token;
+    } catch (error) {
+      console.error('Validate token error:', error);
+      return false;
+    }
+  }
+}
+
+export const authService = new AuthService(); 
