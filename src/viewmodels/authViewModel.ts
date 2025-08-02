@@ -13,7 +13,70 @@ interface FormState {
     password: string;
     confirmPassword: string;
   };
+  touchedFields: {
+    login: {
+      email: boolean;
+      password: boolean;
+    };
+    signup: {
+      name: boolean;
+      email: boolean;
+      password: boolean;
+      confirmPassword: boolean;
+    };
+  };
 }
+
+// Validation functions
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const isValidPassword = (password: string): boolean => {
+  return password.length >= 6;
+};
+
+const validateLoginForm = (email: string, password: string): string | null => {
+  if (!email.trim()) {
+    return 'Email is required';
+  }
+  if (!password.trim()) {
+    return 'Password is required';
+  }
+  if (!isValidEmail(email)) {
+    return 'Please enter a valid email address';
+  }
+  if (!isValidPassword(password)) {
+    return 'Password must be at least 6 characters long';
+  }
+  return null;
+};
+
+const validateSignupForm = (name: string, email: string, password: string, confirmPassword: string): string | null => {
+  if (!name.trim()) {
+    return 'Full name is required';
+  }
+  if (!email.trim()) {
+    return 'Email is required';
+  }
+  if (!password.trim()) {
+    return 'Password is required';
+  }
+  if (!confirmPassword.trim()) {
+    return 'Confirm password is required';
+  }
+  if (!isValidEmail(email)) {
+    return 'Please enter a valid email address';
+  }
+  if (!isValidPassword(password)) {
+    return 'Password must be at least 6 characters long';
+  }
+  if (password !== confirmPassword) {
+    return 'Passwords do not match';
+  }
+  return null;
+};
 
 export const useAuthViewModel = () => {
   const [state, setState] = useState<AuthState>({
@@ -33,6 +96,18 @@ export const useAuthViewModel = () => {
       email: '',
       password: '',
       confirmPassword: '',
+    },
+    touchedFields: {
+      login: {
+        email: false,
+        password: false,
+      },
+      signup: {
+        name: false,
+        email: false,
+        password: false,
+        confirmPassword: false,
+      },
     },
   });
 
@@ -62,6 +137,13 @@ export const useAuthViewModel = () => {
         ...prev.login,
         [field]: value,
       },
+      touchedFields: {
+        ...prev.touchedFields,
+        login: {
+          ...prev.touchedFields.login,
+          [field]: true,
+        },
+      },
     }));
   }, []);
 
@@ -72,6 +154,38 @@ export const useAuthViewModel = () => {
         ...prev.signup,
         [field]: value,
       },
+      touchedFields: {
+        ...prev.touchedFields,
+        signup: {
+          ...prev.touchedFields.signup,
+          [field]: true,
+        },
+      },
+    }));
+  }, []);
+
+  const setFieldTouched = useCallback((formType: 'login' | 'signup', field: string, touched: boolean = true) => {
+    setFormState(prev => ({
+      ...prev,
+      touchedFields: {
+        ...prev.touchedFields,
+        [formType]: {
+          ...prev.touchedFields[formType],
+          [field]: touched,
+        },
+      },
+    }));
+  }, []);
+
+  const clearTouchedFields = useCallback((formType: 'login' | 'signup') => {
+    setFormState(prev => ({
+      ...prev,
+      touchedFields: {
+        ...prev.touchedFields,
+        [formType]: formType === 'login' 
+          ? { email: false, password: false }
+          : { name: false, email: false, password: false, confirmPassword: false },
+      },
     }));
   }, []);
 
@@ -81,6 +195,13 @@ export const useAuthViewModel = () => {
       login: {
         email: '',
         password: '',
+      },
+      touchedFields: {
+        ...prev.touchedFields,
+        login: {
+          email: false,
+          password: false,
+        },
       },
     }));
   }, []);
@@ -93,6 +214,15 @@ export const useAuthViewModel = () => {
         email: '',
         password: '',
         confirmPassword: '',
+      },
+      touchedFields: {
+        ...prev.touchedFields,
+        signup: {
+          name: false,
+          email: false,
+          password: false,
+          confirmPassword: false,
+        },
       },
     }));
   }, []);
@@ -129,53 +259,54 @@ export const useAuthViewModel = () => {
     setState(prev => ({ ...prev, error: null }));
   }, []);
 
-  // Form handlers with validation
+  // Form handlers with comprehensive validation
   const handleLogin = useCallback(async () => {
-    if (!formState.login.email || !formState.login.password) {
-      setError('Please fill in all fields');
-      return;
+    const validationError = validateLoginForm(formState.login.email, formState.login.password);
+    
+    if (validationError) {
+      setError(validationError);
+      return null; // Return null to indicate validation failure
     }
 
     try {
       clearError();
       const response = await login({ 
-        email: formState.login.email, 
+        email: formState.login.email.trim(), 
         password: formState.login.password 
       });
       return response;
     } catch (error) {
       // Error is already handled by the login method
       console.error('Login error:', error);
+      return null; // Return null to indicate failure
     }
   }, [formState.login.email, formState.login.password, login, clearError, setError]);
 
   const handleSignup = useCallback(async () => {
-    if (!formState.signup.name || !formState.signup.email || !formState.signup.password || !formState.signup.confirmPassword) {
-      setError('Please fill in all fields');
-      return;
-    }
-
-    if (formState.signup.password !== formState.signup.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (formState.signup.password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      return;
+    const validationError = validateSignupForm(
+      formState.signup.name, 
+      formState.signup.email, 
+      formState.signup.password, 
+      formState.signup.confirmPassword
+    );
+    
+    if (validationError) {
+      setError(validationError);
+      return null; // Return null to indicate validation failure
     }
 
     try {
       clearError();
       const response = await signup({ 
-        name: formState.signup.name, 
-        email: formState.signup.email, 
+        name: formState.signup.name.trim(), 
+        email: formState.signup.email.trim(), 
         password: formState.signup.password 
       });
       return response;
     } catch (error) {
       // Error is already handled by the signup method
       console.error('Signup error:', error);
+      return null; // Return null to indicate failure
     }
   }, [formState.signup, signup, clearError, setError]);
 
@@ -184,12 +315,15 @@ export const useAuthViewModel = () => {
       setLoading(true);
       await authService.logout();
       setUser(null);
+      // Reset touched fields after logout
+      clearTouchedFields('login');
+      clearTouchedFields('signup');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Logout failed';
       setError(errorMessage);
       throw error;
     }
-  }, [setLoading, setUser, setError]);
+  }, [setLoading, setUser, setError, clearTouchedFields]);
 
   const checkAuthStatus = useCallback(async () => {
     try {
@@ -213,6 +347,7 @@ export const useAuthViewModel = () => {
     // Form State
     loginForm: formState.login,
     signupForm: formState.signup,
+    touchedFields: formState.touchedFields,
 
     // Actions
     login,
@@ -224,6 +359,8 @@ export const useAuthViewModel = () => {
     updateSignupForm,
     clearLoginForm,
     clearSignupForm,
+    setFieldTouched,
+    clearTouchedFields,
     handleLogin,
     handleSignup,
   }), [
@@ -233,6 +370,7 @@ export const useAuthViewModel = () => {
     state.isAuthenticated,
     formState.login,
     formState.signup,
+    formState.touchedFields,
     login, 
     signup, 
     logout, 
@@ -242,6 +380,8 @@ export const useAuthViewModel = () => {
     updateSignupForm,
     clearLoginForm,
     clearSignupForm,
+    setFieldTouched,
+    clearTouchedFields,
     handleLogin,
     handleSignup,
   ]);
