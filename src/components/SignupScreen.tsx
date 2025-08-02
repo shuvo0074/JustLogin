@@ -9,24 +9,62 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigation } from '@react-navigation/native';
+import { AuthStackNavigationProp } from '../types/navigation';
 
 export const SignupScreen: React.FC = () => {
+  const navigation = useNavigation<AuthStackNavigationProp>();
   const { 
     handleSignup, 
     isLoading, 
     error, 
     signupForm, 
-    updateSignupForm 
+    updateSignupForm,
+    touchedFields,
+    setFieldTouched
   } = useAuth();
 
   const onSignupPress = async () => {
     try {
-      await handleSignup();
-      Alert.alert('Success', 'Account created successfully!');
+      const response = await handleSignup();
+      if (response) {
+        // Only navigate if signup was successful
+        navigation.replace('Home');
+      }
+      // If response is null, signup failed and error is already set in ViewModel
     } catch (error) {
       // Error is already handled by the ViewModel
       console.error('Signup error:', error);
     }
+  };
+
+  const onLoginPress = () => {
+    navigation.navigate('Login');
+  };
+
+  const handleFieldChange = (field: 'name' | 'email' | 'password' | 'confirmPassword', value: string) => {
+    updateSignupForm(field, value);
+  };
+
+  const getInputStyle = (field: 'name' | 'email' | 'password' | 'confirmPassword') => {
+    const isTouched = touchedFields.signup[field];
+    const hasValue = signupForm[field].trim().length > 0;
+    
+    if (isTouched && !hasValue) {
+      return [styles.input, styles.inputError];
+    }
+    return styles.input;
+  };
+
+  const getPasswordMatchStyle = () => {
+    const isTouched = touchedFields.signup.confirmPassword;
+    const hasValue = signupForm.confirmPassword.trim().length > 0;
+    const passwordsMatch = signupForm.password === signupForm.confirmPassword;
+    
+    if (isTouched && hasValue && !passwordsMatch) {
+      return [styles.input, styles.inputError];
+    }
+    return styles.input;
   };
 
   return (
@@ -40,36 +78,40 @@ export const SignupScreen: React.FC = () => {
       )}
 
       <TextInput
-        style={styles.input}
+        style={getInputStyle('name')}
         placeholder="Full Name"
         value={signupForm.name}
-        onChangeText={(value) => updateSignupForm('name', value)}
+        onChangeText={(value) => handleFieldChange('name', value)}
         autoCapitalize="words"
+        onBlur={() => setFieldTouched('signup', 'name')}
       />
 
       <TextInput
-        style={styles.input}
+        style={getInputStyle('email')}
         placeholder="Email"
         value={signupForm.email}
-        onChangeText={(value) => updateSignupForm('email', value)}
+        onChangeText={(value) => handleFieldChange('email', value)}
         keyboardType="email-address"
         autoCapitalize="none"
+        onBlur={() => setFieldTouched('signup', 'email')}
       />
 
       <TextInput
-        style={styles.input}
+        style={getInputStyle('password')}
         placeholder="Password"
         value={signupForm.password}
-        onChangeText={(value) => updateSignupForm('password', value)}
+        onChangeText={(value) => handleFieldChange('password', value)}
         secureTextEntry
+        onBlur={() => setFieldTouched('signup', 'password')}
       />
 
       <TextInput
-        style={styles.input}
+        style={getPasswordMatchStyle()}
         placeholder="Confirm Password"
         value={signupForm.confirmPassword}
-        onChangeText={(value) => updateSignupForm('confirmPassword', value)}
+        onChangeText={(value) => handleFieldChange('confirmPassword', value)}
         secureTextEntry
+        onBlur={() => setFieldTouched('signup', 'confirmPassword')}
       />
 
       <TouchableOpacity
@@ -82,6 +124,14 @@ export const SignupScreen: React.FC = () => {
         ) : (
           <Text style={styles.buttonText}>Sign Up</Text>
         )}
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.secondaryButton}
+        onPress={onLoginPress}
+        disabled={isLoading}
+      >
+        <Text style={styles.secondaryButtonText}>Already have an account? Login</Text>
       </TouchableOpacity>
     </View>
   );
@@ -110,6 +160,10 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     fontSize: 16,
   },
+  inputError: {
+    borderColor: '#f44336',
+    borderWidth: 2,
+  },
   button: {
     backgroundColor: '#007AFF',
     padding: 15,
@@ -124,6 +178,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  secondaryButton: {
+    padding: 15,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  secondaryButtonText: {
+    color: '#007AFF',
+    fontSize: 16,
   },
   errorContainer: {
     backgroundColor: '#ffebee',

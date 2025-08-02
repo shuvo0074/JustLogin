@@ -9,24 +9,51 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigation } from '@react-navigation/native';
+import { AuthStackNavigationProp } from '../types/navigation';
 
 export const LoginScreen: React.FC = () => {
+  const navigation = useNavigation<AuthStackNavigationProp>();
   const { 
     handleLogin, 
     isLoading, 
     error, 
     loginForm, 
-    updateLoginForm 
+    updateLoginForm,
+    touchedFields,
+    setFieldTouched
   } = useAuth();
 
   const onLoginPress = async () => {
     try {
-      await handleLogin();
-      Alert.alert('Success', 'Login successful!');
+      const response = await handleLogin();
+      if (response) {
+        // Only navigate if login was successful
+        navigation.replace('Home');
+      }
+      // If response is null, login failed and error is already set in ViewModel
     } catch (error) {
       // Error is already handled by the ViewModel
       console.error('Login error:', error);
     }
+  };
+
+  const onSignupPress = () => {
+    navigation.navigate('Signup');
+  };
+
+  const handleFieldChange = (field: 'email' | 'password', value: string) => {
+    updateLoginForm(field, value);
+  };
+
+  const getInputStyle = (field: 'email' | 'password') => {
+    const isTouched = touchedFields.login[field];
+    const hasValue = loginForm[field].trim().length > 0;
+    
+    if (isTouched && !hasValue) {
+      return [styles.input, styles.inputError];
+    }
+    return styles.input;
   };
 
   return (
@@ -40,20 +67,22 @@ export const LoginScreen: React.FC = () => {
       )}
 
       <TextInput
-        style={styles.input}
+        style={getInputStyle('email')}
         placeholder="Email"
         value={loginForm.email}
-        onChangeText={(value) => updateLoginForm('email', value)}
+        onChangeText={(value) => handleFieldChange('email', value)}
         keyboardType="email-address"
         autoCapitalize="none"
+        onBlur={() => setFieldTouched('login', 'email')}
       />
 
       <TextInput
-        style={styles.input}
+        style={getInputStyle('password')}
         placeholder="Password"
         value={loginForm.password}
-        onChangeText={(value) => updateLoginForm('password', value)}
+        onChangeText={(value) => handleFieldChange('password', value)}
         secureTextEntry
+        onBlur={() => setFieldTouched('login', 'password')}
       />
 
       <TouchableOpacity
@@ -66,6 +95,14 @@ export const LoginScreen: React.FC = () => {
         ) : (
           <Text style={styles.buttonText}>Login</Text>
         )}
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.secondaryButton}
+        onPress={onSignupPress}
+        disabled={isLoading}
+      >
+        <Text style={styles.secondaryButtonText}>Don't have an account? Sign up</Text>
       </TouchableOpacity>
 
       <Text style={styles.hint}>
@@ -98,6 +135,10 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     fontSize: 16,
   },
+  inputError: {
+    borderColor: '#f44336',
+    borderWidth: 2,
+  },
   button: {
     backgroundColor: '#007AFF',
     padding: 15,
@@ -112,6 +153,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  secondaryButton: {
+    padding: 15,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  secondaryButtonText: {
+    color: '#007AFF',
+    fontSize: 16,
   },
   errorContainer: {
     backgroundColor: '#ffebee',

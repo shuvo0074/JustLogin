@@ -8,8 +8,11 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigation } from '@react-navigation/native';
+import { AuthStackNavigationProp } from '../types/navigation';
 
 export const HomeScreen: React.FC = () => {
+  const navigation = useNavigation<AuthStackNavigationProp>();
   const { user, logout, isLoading } = useAuth();
 
   const handleLogout = async () => {
@@ -27,6 +30,7 @@ export const HomeScreen: React.FC = () => {
           onPress: async () => {
             try {
               await logout();
+              navigation.replace('Login');
             } catch (error) {
               console.error('Logout error:', error);
             }
