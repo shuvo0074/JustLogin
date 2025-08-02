@@ -15,6 +15,14 @@ A React Native application implementing authentication with login, signup, and l
 - **Error Handling**: Comprehensive error handling with centralized error display
 - **Centralized Validation**: Validation logic centralized in ViewModel layer
 
+## Usage
+
+![signup gif](https://github.com/user-attachments/assets/1b9a9a82-34b9-434e-9aca-e02b99705a39)
+![login gif](https://github.com/user-attachments/assets/a6018354-4ddb-4002-b81d-fe956691cb6e)
+
+
+
+
 ## Architecture
 
 ### MVVM Pattern Implementation
