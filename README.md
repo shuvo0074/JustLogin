@@ -152,6 +152,7 @@ __tests__/
 2. **Login/Signup**: Validates credentials and stores user data
 3. **Persistence**: Uses AsyncStorage to maintain login state
 4. **Navigation**: Automatically routes to appropriate screen based on auth state using `navigate`
+5. **Success Handling**: Login/signup success is handled by the ViewModel, which manages the authentication state
 
 ### Form Validation
 

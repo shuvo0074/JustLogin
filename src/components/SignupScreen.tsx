@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
@@ -23,16 +22,22 @@ export const SignupScreen: React.FC = () => {
     touchedFields,
     setFieldTouched,
     passwordVisibility,
-    toggleSignupPasswordVisibility
+    toggleSignupPasswordVisibility,
+    validateSignupForm
   } = useAuth();
 
   const onSignupPress = async () => {
+    // Trigger validation for all fields
+    setFieldTouched('signup', 'name', true);
+    setFieldTouched('signup', 'email', true);
+    setFieldTouched('signup', 'password', true);
+    setFieldTouched('signup', 'confirmPassword', true);
+
     try {
       const response = await handleSignup();
-      // If response is null, signup failed and error is already set in ViewModel
+      // Signup success is handled by the ViewModel
     } catch (error) {
       // Error is already handled by the ViewModel
-      console.error('Signup error:', error);
     }
   };
 
@@ -66,7 +71,7 @@ export const SignupScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="screen-Signup">
       <Text style={styles.title}>Create Account</Text>
 
       {error && (
@@ -140,17 +145,20 @@ export const SignupScreen: React.FC = () => {
         {isLoading ? (
           <ActivityIndicator color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>Sign Up</Text>
+          <Text style={styles.buttonText}>Create Account</Text>
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.secondaryButton}
-        onPress={onLoginPress}
-        disabled={isLoading}
-      >
-        <Text style={styles.secondaryButtonText}>Already have an account? Login</Text>
-      </TouchableOpacity>
+      <View style={styles.secondaryButtonContainer}>
+        <Text style={styles.secondaryButtonText}>Already have an account? </Text>
+        <TouchableOpacity
+          style={styles.loginLink}
+          onPress={onLoginPress}
+          disabled={isLoading}
+        >
+          <Text style={styles.loginLinkText}>Login</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -208,6 +216,7 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     backgroundColor: '#ccc',
+    opacity: 0.6,
   },
   buttonText: {
     color: '#fff',
@@ -223,6 +232,19 @@ const styles = StyleSheet.create({
     color: '#007AFF',
     fontSize: 16,
   },
+  loginLink: {
+    // No styles needed for the TouchableOpacity
+  },
+  loginLinkText: {
+    color: '#007AFF',
+    fontSize: 16,
+    textDecorationLine: 'underline',
+  },
+  secondaryButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
   errorContainer: {
     backgroundColor: '#ffebee',
     padding: 10,
@@ -234,5 +256,12 @@ const styles = StyleSheet.create({
   errorText: {
     color: '#f44336',
     textAlign: 'center',
+  },
+  fieldErrorText: {
+    color: '#f44336',
+    fontSize: 12,
+    marginTop: -10,
+    marginBottom: 10,
+    marginLeft: 5,
   },
 }); 

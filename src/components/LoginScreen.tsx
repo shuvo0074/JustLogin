@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Alert,
   ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
@@ -23,15 +22,19 @@ export const LoginScreen: React.FC = () => {
     touchedFields,
     setFieldTouched,
     passwordVisibility,
-    toggleLoginPasswordVisibility
+    toggleLoginPasswordVisibility,
   } = useAuth();
 
   const onLoginPress = async () => {
+    // Trigger validation for all fields
+    setFieldTouched('login', 'email', true);
+    setFieldTouched('login', 'password', true);
+
     try {
       const response = await handleLogin();
+      // Login success is handled by the ViewModel
     } catch (error) {
       // Error is already handled by the ViewModel
-      console.error('Login error:', error);
     }
   };
 
@@ -54,7 +57,7 @@ export const LoginScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="screen-Login">
       <Text style={styles.title}>Login</Text>
 
       {error && (
@@ -104,13 +107,16 @@ export const LoginScreen: React.FC = () => {
         )}
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.secondaryButton}
-        onPress={onSignupPress}
-        disabled={isLoading}
-      >
-        <Text style={styles.secondaryButtonText}>Don't have an account? Sign up</Text>
-      </TouchableOpacity>
+      <View style={styles.secondaryButtonContainer}>
+        <Text style={styles.secondaryButtonText}>Don't have an account? </Text>
+        <TouchableOpacity
+          style={styles.signupLink}
+          onPress={onSignupPress}
+          disabled={isLoading}
+        >
+          <Text style={styles.signupLinkText}>Sign up</Text>
+        </TouchableOpacity>
+      </View>
 
       <Text style={styles.hint}>
         Use test@example.com / password to test
@@ -172,6 +178,7 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: {
     backgroundColor: '#ccc',
+    opacity: 0.6,
   },
   buttonText: {
     color: '#fff',
@@ -199,10 +206,29 @@ const styles = StyleSheet.create({
     color: '#f44336',
     textAlign: 'center',
   },
+  fieldErrorText: {
+    color: '#f44336',
+    fontSize: 12,
+    marginTop: -10,
+    marginBottom: 10,
+    marginLeft: 5,
+  },
   hint: {
     textAlign: 'center',
     marginTop: 20,
     color: '#666',
     fontSize: 14,
+  },
+  secondaryButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  signupLink: {
+    marginLeft: 5,
+  },
+  signupLinkText: {
+    color: '#007AFF',
+    fontSize: 16,
   },
 }); 

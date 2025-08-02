@@ -408,12 +408,19 @@ export const useAuthViewModel = () => {
     touchedFields: formState.touchedFields,
     passwordVisibility: formState.passwordVisibility,
 
+    // Validation functions
+    isValidEmail,
+    isValidPassword,
+    validateLoginForm,
+    validateSignupForm,
+
     // Actions
     login,
     signup,
     logout,
     checkAuthStatus,
     clearError,
+    setError,
     updateLoginForm,
     updateSignupForm,
     clearLoginForm,
@@ -439,6 +446,7 @@ export const useAuthViewModel = () => {
     logout,
     checkAuthStatus,
     clearError,
+    setError,
     updateLoginForm,
     updateSignupForm,
     clearLoginForm,

@@ -8,11 +8,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigation } from '@react-navigation/native';
-import { AuthStackNavigationProp } from '../types/navigation';
 
 export const HomeScreen: React.FC = () => {
-  const navigation = useNavigation<AuthStackNavigationProp>();
   const { user, logout, isLoading } = useAuth();
 
   const handleLogout = async () => {
@@ -49,7 +46,7 @@ export const HomeScreen: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID="screen-Home">
       <Text style={styles.title}>Welcome!</Text>
       
       <View style={styles.userInfoContainer}>

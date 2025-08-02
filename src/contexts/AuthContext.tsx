@@ -21,11 +21,18 @@ interface AuthContextType {
     signup: { password: boolean; confirmPassword: boolean };
   };
 
+  // Validation functions
+  isValidEmail: (email: string) => boolean;
+  isValidPassword: (password: string) => boolean;
+  validateLoginForm: (email: string, password: string) => string | null;
+  validateSignupForm: (name: string, email: string, password: string, confirmPassword: string) => string | null;
+
   // Actions
   login: (credentials: LoginCredentials) => Promise<any>;
   signup: (credentials: SignupCredentials) => Promise<any>;
   logout: () => Promise<void>;
   clearError: () => void;
+  setError: (error: string) => void;
   updateLoginForm: (field: 'email' | 'password', value: string) => void;
   updateSignupForm: (field: 'name' | 'email' | 'password' | 'confirmPassword', value: string) => void;
   clearLoginForm: () => void;
@@ -70,11 +77,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     touchedFields: authViewModel.touchedFields,
     passwordVisibility: authViewModel.passwordVisibility,
 
+    // Validation functions
+    isValidEmail: authViewModel.isValidEmail,
+    isValidPassword: authViewModel.isValidPassword,
+    validateLoginForm: authViewModel.validateLoginForm,
+    validateSignupForm: authViewModel.validateSignupForm,
+
     // Actions
     login: authViewModel.login,
     signup: authViewModel.signup,
     logout: authViewModel.logout,
     clearError: authViewModel.clearError,
+    setError: authViewModel.setError,
     updateLoginForm: authViewModel.updateLoginForm,
     updateSignupForm: authViewModel.updateSignupForm,
     clearLoginForm: authViewModel.clearLoginForm,
