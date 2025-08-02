@@ -30,7 +30,6 @@ export const HomeScreen: React.FC = () => {
           onPress: async () => {
             try {
               await logout();
-              navigation.replace('Login');
             } catch (error) {
               console.error('Logout error:', error);
             }

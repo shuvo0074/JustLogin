@@ -29,10 +29,6 @@ export const SignupScreen: React.FC = () => {
   const onSignupPress = async () => {
     try {
       const response = await handleSignup();
-      if (response) {
-        // Only navigate if signup was successful
-        navigation.replace('Home');
-      }
       // If response is null, signup failed and error is already set in ViewModel
     } catch (error) {
       // Error is already handled by the ViewModel

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LoginCredentials, SignupCredentials, AuthResponse, User } from '../types/auth';
 
 // Mock API service - replace with actual API calls
@@ -11,34 +12,55 @@ class AuthService {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // Store token in AsyncStorage (in real app, use @react-native-async-storage/async-storage)
+  // Store token in AsyncStorage
   private async storeToken(token: string): Promise<void> {
-    // In a real app, use AsyncStorage.setItem(this.tokenKey, token);
-    console.log('Token stored:', token);
+    try {
+      await AsyncStorage.setItem(this.tokenKey, token);
+    } catch (error) {
+      console.error('Error storing token:', error);
+    }
   }
 
   // Get token from storage
   private async getStoredToken(): Promise<string | null> {
-    // In a real app, use AsyncStorage.getItem(this.tokenKey);
-    return null;
+    try {
+      return await AsyncStorage.getItem(this.tokenKey);
+    } catch (error) {
+      console.error('Error getting stored token:', error);
+      return null;
+    }
   }
 
   // Store user data
   private async storeUser(user: User): Promise<void> {
-    // In a real app, use AsyncStorage.setItem(this.userKey, JSON.stringify(user));
-    console.log('User stored:', user);
+    try {
+      await AsyncStorage.setItem(this.userKey, JSON.stringify(user));
+    } catch (error) {
+      console.error('Error storing user:', error);
+    }
   }
 
   // Get stored user data
   private async getStoredUser(): Promise<User | null> {
-    // In a real app, use AsyncStorage.getItem(this.userKey);
-    return null;
+    try {
+      const userData = await AsyncStorage.getItem(this.userKey);
+      if (userData) {
+        return JSON.parse(userData) as User;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting stored user:', error);
+      return null;
+    }
   }
 
   // Clear stored data
   private async clearStoredData(): Promise<void> {
-    // In a real app, use AsyncStorage.multiRemove([this.tokenKey, this.userKey]);
-    console.log('Stored data cleared');
+    try {
+      await AsyncStorage.multiRemove([this.tokenKey, this.userKey]);
+    } catch (error) {
+      console.error('Error clearing stored data:', error);
+    }
   }
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {

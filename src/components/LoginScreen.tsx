@@ -29,11 +29,6 @@ export const LoginScreen: React.FC = () => {
   const onLoginPress = async () => {
     try {
       const response = await handleLogin();
-      if (response) {
-        // Only navigate if login was successful
-        navigation.replace('Home');
-      }
-      // If response is null, login failed and error is already set in ViewModel
     } catch (error) {
       // Error is already handled by the ViewModel
       console.error('Login error:', error);

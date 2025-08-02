@@ -200,7 +200,7 @@ export const useAuthViewModel = () => {
       ...prev,
       touchedFields: {
         ...prev.touchedFields,
-        [formType]: formType === 'login' 
+        [formType]: formType === 'login'
           ? { email: false, password: false }
           : { name: false, email: false, password: false, confirmPassword: false },
       },
@@ -318,7 +318,7 @@ export const useAuthViewModel = () => {
   // Form handlers with comprehensive validation
   const handleLogin = useCallback(async () => {
     const validationError = validateLoginForm(formState.login.email, formState.login.password);
-    
+
     if (validationError) {
       setError(validationError);
       return null; // Return null to indicate validation failure
@@ -326,9 +326,9 @@ export const useAuthViewModel = () => {
 
     try {
       clearError();
-      const response = await login({ 
-        email: formState.login.email.trim(), 
-        password: formState.login.password 
+      const response = await login({
+        email: formState.login.email.trim(),
+        password: formState.login.password
       });
       return response;
     } catch (error) {
@@ -340,12 +340,12 @@ export const useAuthViewModel = () => {
 
   const handleSignup = useCallback(async () => {
     const validationError = validateSignupForm(
-      formState.signup.name, 
-      formState.signup.email, 
-      formState.signup.password, 
+      formState.signup.name,
+      formState.signup.email,
+      formState.signup.password,
       formState.signup.confirmPassword
     );
-    
+
     if (validationError) {
       setError(validationError);
       return null; // Return null to indicate validation failure
@@ -353,10 +353,10 @@ export const useAuthViewModel = () => {
 
     try {
       clearError();
-      const response = await signup({ 
-        name: formState.signup.name.trim(), 
-        email: formState.signup.email.trim(), 
-        password: formState.signup.password 
+      const response = await signup({
+        name: formState.signup.name.trim(),
+        email: formState.signup.email.trim(),
+        password: formState.signup.password
       });
       return response;
     } catch (error) {
@@ -389,6 +389,8 @@ export const useAuthViewModel = () => {
     } catch (error) {
       console.error('Check auth status error:', error);
       setUser(null);
+    } finally {
+      setLoading(false);
     }
   }, [setLoading, setUser]);
 
@@ -422,19 +424,20 @@ export const useAuthViewModel = () => {
     toggleSignupPasswordVisibility,
     handleLogin,
     handleSignup,
+
   }), [
-    state.user, 
-    state.isLoading, 
-    state.error, 
+    state.user,
+    state.isLoading,
+    state.error,
     state.isAuthenticated,
     formState.login,
     formState.signup,
     formState.touchedFields,
     formState.passwordVisibility,
-    login, 
-    signup, 
-    logout, 
-    checkAuthStatus, 
+    login,
+    signup,
+    logout,
+    checkAuthStatus,
     clearError,
     updateLoginForm,
     updateSignupForm,
