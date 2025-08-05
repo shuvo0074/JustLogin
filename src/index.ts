@@ -10,6 +10,9 @@ export { HomeScreen } from './screens/HomeScreen';
 export { InputField } from './components/InputField';
 export { PasswordInput } from './components/PasswordInput';
 export { Button } from './components/Button';
+export { LoadingSpinner } from './components/LoadingSpinner';
+export { UserInfoCard } from './components/UserInfoCard';
+export { PageTitle } from './components/PageTitle';
 
 // Navigation
 export { AuthNavigator } from './navigation/AuthNavigator';
