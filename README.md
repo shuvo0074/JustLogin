@@ -1,12 +1,13 @@
 # React Native Authentication App
 
-A React Native application implementing authentication with login, signup, and logout functionality using the MVVM pattern and React Context API.
+A React Native application implementing authentication with login, signup, and logout functionality using the MVVM pattern, React Context API, and reusable components.
 
 ## Features
 
 - **Authentication Flow**: Login, signup, and logout functionality
 - **MVVM Architecture**: Clean separation of concerns with Model, View, ViewModel pattern
 - **React Context API**: Global state management for authentication
+- **Reusable Components**: Modular UI components for consistent design
 - **Form Validation**: Client-side validation for email, password, and required fields
 - **Password Visibility Toggle**: Show/hide password functionality with monkey-themed icons
 - **AsyncStorage Persistence**: User authentication state persists across app restarts
@@ -14,14 +15,12 @@ A React Native application implementing authentication with login, signup, and l
 - **Loading States**: Button loading indicators during authentication operations
 - **Error Handling**: Comprehensive error handling with centralized error display
 - **Centralized Validation**: Validation logic centralized in ViewModel layer
+- **TypeScript**: Full type safety throughout the application
 
 ## Usage
 
 ![signup gif](https://github.com/user-attachments/assets/1b9a9a82-34b9-434e-9aca-e02b99705a39)
 ![login gif](https://github.com/user-attachments/assets/a6018354-4ddb-4002-b81d-fe956691cb6e)
-
-
-
 
 ## Architecture
 
@@ -32,31 +31,69 @@ A React Native application implementing authentication with login, signup, and l
 - **ViewModel**: `useAuthViewModel` - Business logic, state management, and validation
 - **Context**: `AuthContext` - Global state provider
 
+### Reusable Components
+
+The application uses a modular component architecture with reusable UI components:
+
+#### Core Components
+- **`InputField`**: Extensible text input with labels, error states, and custom styling
+- **`PasswordInput`**: Password input with visibility toggle functionality
+- **`Button`**: Multi-variant button component (primary, secondary, danger) with loading states
+- **`LoadingSpinner`**: Loading indicator with customizable message and styling
+- **`UserInfoCard`**: User information display card with configurable fields
+- **`PageTitle`**: Reusable page title component with size variants
+
+#### Component Features
+- **TypeScript Support**: Full type safety with proper interfaces
+- **Customizable Styling**: Style props for container, text, and component-specific styling
+- **Accessibility**: Built-in accessibility features
+- **Performance Optimized**: Uses `useCallback` for memoization where appropriate
+- **Test Coverage**: Comprehensive unit tests for all components
+
 ### File Structure
 
 ```
 src/
-├── components/          # UI Components
+├── components/          # Reusable UI Components
+│   ├── __tests__/
+│   │   ├── LoadingSpinner.test.tsx
+│   │   ├── UserInfoCard.test.tsx
+│   │   ├── PageTitle.test.tsx
+│   │   └── PasswordInput.test.tsx
+│   ├── InputField.tsx
+│   ├── PasswordInput.tsx
+│   ├── Button.tsx
+│   ├── LoadingSpinner.tsx
+│   ├── UserInfoCard.tsx
+│   └── PageTitle.tsx
+├── screens/            # Screen Components
+│   ├── __tests__/
+│   │   ├── HomeScreen.test.tsx
+│   │   ├── LoginScreen.test.tsx
+│   │   └── SignupScreen.test.tsx
+│   ├── HomeScreen.tsx
 │   ├── LoginScreen.tsx
-│   ├── SignupScreen.tsx
-│   └── HomeScreen.tsx
+│   └── SignupScreen.tsx
 ├── contexts/           # React Context
+│   ├── __tests__/
+│   │   └── AuthContext.test.tsx
 │   └── AuthContext.tsx
 ├── navigation/         # Navigation setup
+│   ├── __tests__/
+│   │   └── AuthNavigator.test.tsx
 │   └── AuthNavigator.tsx
 ├── services/          # API and data layer
+│   ├── __tests__/
+│   │   └── authService.test.ts
 │   └── authService.ts
 ├── types/             # TypeScript definitions
 │   ├── auth.ts
 │   └── navigation.ts
 ├── viewmodels/        # Business logic layer
+│   ├── __tests__/
+│   │   └── authViewModel.test.ts
 │   └── authViewModel.ts
-└── __tests__/         # Unit tests
-    ├── components/
-    ├── contexts/
-    ├── navigation/
-    ├── services/
-    └── viewmodels/
+└── index.ts           # Main exports
 ```
 
 ## Getting Started
@@ -112,12 +149,19 @@ npm test -- --testPathPattern="authService"
 
 # Run tests in watch mode
 npm test -- --watch
+
+# Run component tests only
+npm test -- --testPathPattern="components"
+
+# Run screen tests only
+npm test -- --testPathPattern="screens"
 ```
 
 ### Test Coverage
 
 The test suite covers:
 
+- **Reusable Components**: All component variants, props, and edge cases
 - **AuthService**: API methods, storage operations, validation
 - **AuthViewModel**: State management, form handling, authentication logic, centralized validation
 - **AuthContext**: Context provider, hook functionality, error handling
@@ -128,22 +172,27 @@ The test suite covers:
 ### Test Structure
 
 ```
-src/__tests__/
-├── services/
-│   └── authService.test.ts      # API and storage tests
-├── viewmodels/
-│   └── authViewModel.test.ts    # Business logic tests
-├── contexts/
-│   └── AuthContext.test.tsx     # Context provider tests
-├── components/
-│   ├── LoginScreen.test.tsx     # Login form tests
-│   ├── SignupScreen.test.tsx    # Signup form tests
-│   └── HomeScreen.test.tsx      # Home screen tests
-└── navigation/
-    └── AuthNavigator.test.tsx   # Navigation tests
+src/
+├── components/__tests__/
+│   ├── LoadingSpinner.test.tsx
+│   ├── UserInfoCard.test.tsx
+│   ├── PageTitle.test.tsx
+│   └── PasswordInput.test.tsx
+├── screens/__tests__/
+│   ├── LoginScreen.test.tsx
+│   ├── SignupScreen.test.tsx
+│   └── HomeScreen.test.tsx
+├── services/__tests__/
+│   └── authService.test.ts
+├── viewmodels/__tests__/
+│   └── authViewModel.test.ts
+├── contexts/__tests__/
+│   └── AuthContext.test.tsx
+└── navigation/__tests__/
+    └── AuthNavigator.test.tsx
 
 __tests__/
-└── App.test.tsx                 # App component test
+└── App.test.tsx
 ```
 
 ### Test Configuration
@@ -161,6 +210,66 @@ __tests__/
 3. **Persistence**: Uses AsyncStorage to maintain login state
 4. **Navigation**: Automatically routes to appropriate screen based on auth state using `navigate`
 5. **Success Handling**: Login/signup success is handled by the ViewModel, which manages the authentication state
+
+### Reusable Components
+
+#### InputField Component
+```typescript
+<InputField
+  placeholder="Email"
+  value={email}
+  onChangeText={setEmail}
+  error={emailError}
+  label="Email Address"
+/>
+```
+
+#### PasswordInput Component
+```typescript
+<PasswordInput
+  placeholder="Password"
+  value={password}
+  onChangeText={setPassword}
+  showToggle={true}
+/>
+```
+
+#### Button Component
+```typescript
+<Button
+  title="Login"
+  variant="primary"
+  size="medium"
+  loading={isLoading}
+  onPress={handleLogin}
+/>
+```
+
+#### LoadingSpinner Component
+```typescript
+<LoadingSpinner
+  message="Logging out..."
+  size="large"
+  color="#007AFF"
+/>
+```
+
+#### UserInfoCard Component
+```typescript
+<UserInfoCard
+  user={user}
+  showId={true}
+  showTimestamps={false}
+/>
+```
+
+#### PageTitle Component
+```typescript
+<PageTitle
+  title="Welcome!"
+  variant="large"
+/>
+```
 
 ### Form Validation
 
@@ -194,3 +303,34 @@ __tests__/
 - `@testing-library/react-native`: ^12.0.0
 - `@testing-library/react-hooks`: ^8.0.1
 - `typescript`: 5.0.4
+
+## Recent Updates
+
+### Component Refactoring
+- **Reusable Components**: Created modular UI components for better code organization
+- **TypeScript Support**: Enhanced type safety across all components
+- **Performance Optimization**: Implemented `useCallback` for memoization
+- **Test Coverage**: Added comprehensive tests for all new components
+
+### Screen Updates
+- **HomeScreen**: Refactored to use reusable components (LoadingSpinner, UserInfoCard, PageTitle)
+- **LoginScreen**: Updated to use InputField, PasswordInput, and Button components
+- **SignupScreen**: Updated to use InputField, PasswordInput, and Button components
+
+### Testing Improvements
+- **Component Tests**: Added 19 new tests for reusable components
+- **Test Coverage**: Maintained 100% test coverage for all functionality
+- **Test Organization**: Improved test structure and organization
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Ensure all tests pass
+6. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.
