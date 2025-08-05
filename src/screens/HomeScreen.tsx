@@ -2,12 +2,12 @@ import React, { useCallback } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
   Alert,
   ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
+import { Button } from '../components/Button';
 
 export const HomeScreen: React.FC = () => {
   const { user, logout, isLoading } = useAuth();
@@ -60,17 +60,13 @@ export const HomeScreen: React.FC = () => {
         <Text style={styles.userInfoValue}>{user?.id}</Text>
       </View>
 
-      <TouchableOpacity
-        style={[styles.button, isLoading && styles.buttonDisabled]}
+      <Button
+        title="Logout"
+        variant="danger"
         onPress={handleLogout}
+        loading={isLoading}
         disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Logout</Text>
-        )}
-      </TouchableOpacity>
+      />
     </View>
   );
 };
@@ -124,19 +120,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#333',
     marginBottom: 15,
-  },
-  button: {
-    backgroundColor: '#FF3B30',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonDisabled: {
-    backgroundColor: '#ccc',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
 }); 
