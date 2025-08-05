@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import { useAuth } from '../contexts/AuthContext';
 export const HomeScreen: React.FC = () => {
   const { user, logout, isLoading } = useAuth();
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     Alert.alert(
       'Logout',
       'Are you sure you want to logout?',
@@ -34,7 +34,7 @@ export const HomeScreen: React.FC = () => {
         },
       ]
     );
-  };
+  }, [logout]);
 
   if (isLoading) {
     return (

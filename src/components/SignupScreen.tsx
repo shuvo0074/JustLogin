@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   Text,
@@ -25,19 +25,19 @@ export const SignupScreen: React.FC = () => {
     clearError
   } = useAuth();
 
-  const onSignupPress = async () => {
+  const onSignupPress = useCallback(async () => {
     try {
       const response = await handleSignup();
       // Signup success is handled by the ViewModel
     } catch (error) {
       // Error is already handled by the ViewModel
     }
-  };
+  }, [handleSignup]);
 
-  const onLoginPress = () => {
+  const onLoginPress = useCallback(() => {
     clearError(); // Reset error state when navigating to login
     navigation.navigate('Login');
-  };
+  }, [clearError, navigation]);
 
   const handleFieldChange = (field: 'name' | 'email' | 'password' | 'confirmPassword', value: string) => {
     updateSignupForm(field, value);
