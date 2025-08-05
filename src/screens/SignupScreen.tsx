@@ -2,14 +2,14 @@ import React, { useCallback } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import { AuthStackNavigationProp } from '../types/navigation';
+import { InputField } from '../components/InputField';
+import { PasswordInput } from '../components/PasswordInput';
+import { Button } from '../components/Button';
 
 export const SignupScreen: React.FC = () => {
   const navigation = useNavigation<AuthStackNavigationProp>();
@@ -19,9 +19,6 @@ export const SignupScreen: React.FC = () => {
     error,
     signupForm,
     updateSignupForm,
-    passwordVisibility,
-    toggleSignupPasswordVisibility,
-    validateSignupForm,
     clearError
   } = useAuth();
 
@@ -53,80 +50,55 @@ export const SignupScreen: React.FC = () => {
         </View>
       )}
 
-      <TextInput
-        style={styles.input}
+      <InputField
         placeholder="Full Name"
         value={signupForm.name}
         onChangeText={(value) => handleFieldChange('name', value)}
         autoCapitalize="words"
+        autoComplete="name"
       />
 
-      <TextInput
-        style={styles.input}
+      <InputField
         placeholder="Email"
         value={signupForm.email}
         onChangeText={(value) => handleFieldChange('email', value)}
         keyboardType="email-address"
         autoCapitalize="none"
+        autoComplete="email"
       />
 
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={[styles.input, styles.passwordInput]}
-          placeholder="Password"
-          value={signupForm.password}
-          onChangeText={(value) => handleFieldChange('password', value)}
-          secureTextEntry={!passwordVisibility.signup.password}
-        />
-        <TouchableOpacity
-          style={styles.eyeButton}
-          onPress={() => toggleSignupPasswordVisibility('password')}
-        >
-          <Text style={styles.eyeIcon}>
-            {passwordVisibility.signup.password ? '🙉' : '🙈'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <PasswordInput
+        placeholder="Password"
+        value={signupForm.password}
+        onChangeText={(value) => handleFieldChange('password', value)}
+        autoComplete="new-password"
+      />
 
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={[styles.input, styles.passwordInput]}
-          placeholder="Confirm Password"
-          value={signupForm.confirmPassword}
-          onChangeText={(value) => handleFieldChange('confirmPassword', value)}
-          secureTextEntry={!passwordVisibility.signup.confirmPassword}
-        />
-        <TouchableOpacity
-          style={styles.eyeButton}
-          onPress={() => toggleSignupPasswordVisibility('confirmPassword')}
-        >
-          <Text style={styles.eyeIcon}>
-            {passwordVisibility.signup.confirmPassword ? '🙉' : '🙈'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <PasswordInput
+        placeholder="Confirm Password"
+        value={signupForm.confirmPassword}
+        onChangeText={(value) => handleFieldChange('confirmPassword', value)}
+        autoComplete="new-password"
+      />
 
-      <TouchableOpacity
-        style={[styles.button, isLoading && styles.buttonDisabled]}
+      <Button
+        title="Create Account"
         onPress={onSignupPress}
+        loading={isLoading}
         disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Create Account</Text>
-        )}
-      </TouchableOpacity>
+        style={styles.signupButton}
+      />
 
       <View style={styles.secondaryButtonContainer}>
         <Text style={styles.secondaryButtonText}>Already have an account? </Text>
-        <TouchableOpacity
-          style={styles.loginLink}
+        <Button
+          title="Login"
+          variant="secondary"
+          size="small"
           onPress={onLoginPress}
           disabled={isLoading}
-        >
-          <Text style={styles.loginLinkText}>Login</Text>
-        </TouchableOpacity>
+          containerStyle={styles.loginLink}
+        />
       </View>
     </View>
   );
@@ -146,74 +118,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     color: '#333',
   },
-  input: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    fontSize: 16,
-  },
-  inputError: {
-    borderColor: '#f44336',
-    borderWidth: 2,
-  },
-  passwordContainer: {
-    position: 'relative',
-    marginBottom: 15,
-  },
-  passwordInput: {
-    paddingRight: 50,
-  },
-  eyeButton: {
-    position: 'absolute',
-    right: 15,
-    top: 15,
-    padding: 5,
-  },
-  eyeIcon: {
-    fontSize: 20,
-    marginTop: -8,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonDisabled: {
-    backgroundColor: '#ccc',
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  secondaryButton: {
-    padding: 15,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  secondaryButtonText: {
-    color: '#007AFF',
-    fontSize: 16,
-  },
-  loginLink: {
-    // No styles needed for the TouchableOpacity
-  },
-  loginLinkText: {
-    color: '#007AFF',
-    fontSize: 16,
-    textDecorationLine: 'underline',
-  },
-  secondaryButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
   errorContainer: {
     backgroundColor: '#ffebee',
     padding: 10,
@@ -226,11 +130,20 @@ const styles = StyleSheet.create({
     color: '#f44336',
     textAlign: 'center',
   },
-  fieldErrorText: {
-    color: '#f44336',
-    fontSize: 12,
-    marginTop: -10,
-    marginBottom: 10,
+  signupButton: {
+    marginTop: 10,
+  },
+  secondaryButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  secondaryButtonText: {
+    color: '#666',
+    fontSize: 16,
+  },
+  loginLink: {
     marginLeft: 5,
   },
 }); 

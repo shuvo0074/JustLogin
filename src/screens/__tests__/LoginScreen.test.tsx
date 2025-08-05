@@ -90,33 +90,6 @@ describe('LoginScreen', () => {
 
       expect(passwordInput.props.value).toBe('password123');
     });
-
-    it('should toggle password visibility', () => {
-      const { getByPlaceholderText, getByText } = renderLoginScreen();
-      const passwordInput = getByPlaceholderText('Password');
-      const eyeButton = getByText('🙈').parent;
-
-      // Initially password should be hidden
-      expect(passwordInput.props.secureTextEntry).toBe(true);
-
-      // Toggle password visibility
-      if (eyeButton) {
-        fireEvent.press(eyeButton);
-      }
-
-      // Password should be visible
-      expect(passwordInput.props.secureTextEntry).toBe(false);
-      expect(getByText('🙉')).toBeTruthy();
-
-      // Toggle back
-      if (eyeButton) {
-        fireEvent.press(eyeButton);
-      }
-
-      // Password should be hidden again
-      expect(passwordInput.props.secureTextEntry).toBe(true);
-      expect(getByText('🙈')).toBeTruthy();
-    });
   });
 
   describe('Form validation', () => {

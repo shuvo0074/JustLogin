@@ -2,14 +2,14 @@ import React, { useCallback } from 'react';
 import {
   View,
   Text,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigation } from '@react-navigation/native';
 import { AuthStackNavigationProp } from '../types/navigation';
+import { InputField } from '../components/InputField';
+import { PasswordInput } from '../components/PasswordInput';
+import { Button } from '../components/Button';
 
 export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<AuthStackNavigationProp>();
@@ -19,8 +19,6 @@ export const LoginScreen: React.FC = () => {
     error,
     loginForm,
     updateLoginForm,
-    passwordVisibility,
-    toggleLoginPasswordVisibility,
     clearError,
   } = useAuth();
 
@@ -52,54 +50,40 @@ export const LoginScreen: React.FC = () => {
         </View>
       )}
 
-      <TextInput
-        style={styles.input}
+      <InputField
         placeholder="Email"
         value={loginForm.email}
         onChangeText={(value) => handleFieldChange('email', value)}
         keyboardType="email-address"
         autoCapitalize="none"
+        autoComplete="email"
       />
 
-      <View style={styles.passwordContainer}>
-        <TextInput
-          style={[styles.input, styles.passwordInput]}
-          placeholder="Password"
-          value={loginForm.password}
-          onChangeText={(value) => handleFieldChange('password', value)}
-          secureTextEntry={!passwordVisibility.login.password}
-        />
-        <TouchableOpacity
-          style={styles.eyeButton}
-          onPress={toggleLoginPasswordVisibility}
-        >
-          <Text style={styles.eyeIcon}>
-            {passwordVisibility.login.password ? '🙉' : '🙈'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <PasswordInput
+        placeholder="Password"
+        value={loginForm.password}
+        onChangeText={(value) => handleFieldChange('password', value)}
+        autoComplete="password"
+      />
 
-      <TouchableOpacity
-        style={[styles.button, isLoading && styles.buttonDisabled]}
+      <Button
+        title="Login"
         onPress={onLoginPress}
+        loading={isLoading}
         disabled={isLoading}
-      >
-        {isLoading ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Login</Text>
-        )}
-      </TouchableOpacity>
+        style={styles.loginButton}
+      />
 
       <View style={styles.secondaryButtonContainer}>
         <Text style={styles.secondaryButtonText}>Don't have an account? </Text>
-        <TouchableOpacity
-          style={styles.signupLink}
+        <Button
+          title="Sign up"
+          variant="secondary"
+          size="small"
           onPress={onSignupPress}
           disabled={isLoading}
-        >
-          <Text style={styles.signupLinkText}>Sign up</Text>
-        </TouchableOpacity>
+          containerStyle={styles.signupLink}
+        />
       </View>
 
       <Text style={styles.hint}>
@@ -123,61 +107,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     color: '#333',
   },
-  input: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    fontSize: 16,
-  },
-  inputError: {
-    borderColor: '#f44336',
-    borderWidth: 2,
-  },
-  passwordContainer: {
-    position: 'relative',
-    marginBottom: 15,
-  },
-  passwordInput: {
-    paddingRight: 50,
-  },
-  eyeButton: {
-    position: 'absolute',
-    right: 15,
-    top: 15,
-    padding: 5,
-  },
-  eyeIcon: {
-    fontSize: 20,
-    marginTop: -8,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonDisabled: {
-    backgroundColor: '#ccc',
-    opacity: 0.6,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  secondaryButton: {
-    padding: 15,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  secondaryButtonText: {
-    color: '#007AFF',
-    fontSize: 16,
-  },
   errorContainer: {
     backgroundColor: '#ffebee',
     padding: 10,
@@ -190,11 +119,20 @@ const styles = StyleSheet.create({
     color: '#f44336',
     textAlign: 'center',
   },
-  fieldErrorText: {
-    color: '#f44336',
-    fontSize: 12,
-    marginTop: -10,
-    marginBottom: 10,
+  loginButton: {
+    marginTop: 10,
+  },
+  secondaryButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  secondaryButtonText: {
+    color: '#666',
+    fontSize: 16,
+  },
+  signupLink: {
     marginLeft: 5,
   },
   hint: {
@@ -202,17 +140,5 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: '#666',
     fontSize: 14,
-  },
-  secondaryButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 10,
-  },
-  signupLink: {
-    marginLeft: 5,
-  },
-  signupLinkText: {
-    color: '#007AFF',
-    fontSize: 16,
   },
 }); 
