@@ -2,9 +2,9 @@ import React from 'react';
 import { View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useAuth } from '../contexts/AuthContext';
-import { LoginScreen } from '../components/LoginScreen';
-import { SignupScreen } from '../components/SignupScreen';
-import { HomeScreen } from '../components/HomeScreen';
+import { LoginScreen } from '../screens/LoginScreen';
+import { SignupScreen } from '../screens/SignupScreen';
+import { HomeScreen } from '../screens/HomeScreen';
 import { RootStackParamList } from '../types/navigation';
 
 const Stack = createStackNavigator<RootStackParamList>();

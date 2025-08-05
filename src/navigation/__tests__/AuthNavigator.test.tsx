@@ -27,17 +27,17 @@ jest.mock('@react-navigation/stack', () => ({
   }),
 }));
 
-// Mock the screen components to include their testIDs
-jest.mock('../../components/LoginScreen', () => ({
-  LoginScreen: () => <div data-testid="screen-Login" data-component="LoginScreen">LoginScreen</div>,
+// Mock the screen components
+jest.mock('../../screens/LoginScreen', () => ({
+  LoginScreen: () => null,
 }));
 
-jest.mock('../../components/SignupScreen', () => ({
-  SignupScreen: () => <div data-testid="screen-Signup" data-component="SignupScreen">SignupScreen</div>,
+jest.mock('../../screens/SignupScreen', () => ({
+  SignupScreen: () => null,
 }));
 
-jest.mock('../../components/HomeScreen', () => ({
-  HomeScreen: () => <div data-testid="screen-Home" data-component="HomeScreen">HomeScreen</div>,
+jest.mock('../../screens/HomeScreen', () => ({
+  HomeScreen: () => null,
 }));
 
 describe('AuthNavigator', () => {

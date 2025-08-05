@@ -11,10 +11,10 @@ export { useAuthViewModel } from './viewmodels/authViewModel';
 // Contexts
 export { AuthProvider, useAuth } from './contexts/AuthContext';
 
-// Components
-export { LoginScreen } from './components/LoginScreen';
-export { SignupScreen } from './components/SignupScreen';
-export { HomeScreen } from './components/HomeScreen';
+// Screen components
+export { LoginScreen } from './screens/LoginScreen';
+export { SignupScreen } from './screens/SignupScreen';
+export { HomeScreen } from './screens/HomeScreen';
 
 // Navigation
 export { AuthNavigator } from './navigation/AuthNavigator'; 
