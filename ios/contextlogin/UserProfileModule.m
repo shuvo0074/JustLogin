@@ -34,11 +34,6 @@
  * - NSDictionary *userProfile: JavaScript object converted to native dictionary
  * - RCTPromiseResolveBlock resolve: Promise resolver for successful results
  * - RCTPromiseRejectBlock reject: Promise rejecter for error handling
- * 
- * JavaScript Usage:
- * NativeModules.UserProfileModule.processUserProfile(userProfile)
- *   .then(result => { /* handle success */ })
- *   .catch(error => { /* handle error */ })
  */
 RCT_EXTERN_METHOD(processUserProfile:(NSDictionary *)userProfile
                   resolver:(RCTPromiseResolveBlock)resolve
