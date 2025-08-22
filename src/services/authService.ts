@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LoginCredentials, SignupCredentials, AuthResponse, User } from '../types/auth';
+import { biometricAuthService } from './biometricAuthService';
 
 // Mock API service - replace with actual API calls
 class AuthService {
@@ -168,6 +169,49 @@ class AuthService {
       console.error('Validate token error:', error);
       return false;
     }
+  }
+
+  /**
+   * Login using biometric authentication
+   */
+  async loginWithBiometrics(): Promise<AuthResponse> {
+    try {
+      // First, authenticate with biometrics
+      const biometricResult = await biometricAuthService.authenticate();
+      
+      if (!biometricResult.success) {
+        throw new Error('Biometric authentication failed');
+      }
+      
+      // If biometrics succeed, proceed with login using stored credentials
+      const storedUser = await this.getStoredUser();
+      const storedToken = await this.getStoredToken();
+      
+      if (storedUser && storedToken) {
+        return {
+          user: storedUser,
+          token: storedToken,
+        };
+      } else {
+        throw new Error('No stored credentials found. Please login with email/password first.');
+      }
+    } catch (error) {
+      throw new Error(`Biometric login failed: ${error}`);
+    }
+  }
+
+  /**
+   * Check if biometric authentication is available
+   */
+  async isBiometricsAvailable(): Promise<boolean> {
+    return await biometricAuthService.checkAvailability();
+  }
+
+  /**
+   * Get supported biometric types
+   */
+  async getSupportedBiometricTypes(): Promise<string[]> {
+    return await biometricAuthService.getSupportedTypes();
   }
 }
 

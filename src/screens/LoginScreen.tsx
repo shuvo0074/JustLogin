@@ -10,6 +10,7 @@ import { AuthStackNavigationProp } from '../types/navigation';
 import { InputField } from '../components/InputField';
 import { PasswordInput } from '../components/PasswordInput';
 import { Button } from '../components/Button';
+import { BiometricLoginButton } from '../components/BiometricLoginButton';
 
 export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<AuthStackNavigationProp>();
@@ -72,6 +73,17 @@ export const LoginScreen: React.FC = () => {
         loading={isLoading}
         disabled={isLoading}
         style={styles.loginButton}
+      />
+
+      <BiometricLoginButton
+        onSuccess={(user) => {
+          // Handle successful biometric login
+          console.log('Biometric login successful:', user);
+        }}
+        onError={(error) => {
+          console.error('Biometric login error:', error);
+        }}
+        style={styles.biometricButton}
       />
 
       <View style={styles.secondaryButtonContainer}>
@@ -140,5 +152,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: '#666',
     fontSize: 14,
+  },
+  biometricButton: {
+    marginTop: 20,
   },
 }); 
