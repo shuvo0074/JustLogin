@@ -1,7 +1,6 @@
-import { NativeModules, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { UserProfile, ProfileProcessingResult } from '../types/userProfile';
-
-const { UserProfileModule } = NativeModules;
+import UserProfileModule from '../specs/UserProfileModule';
 
 export class UserProfileService {
   /**
@@ -39,7 +38,7 @@ export class UserProfileService {
     return {
       platform: Platform.OS,
       moduleAvailable: this.isAvailable(),
-      moduleName: UserProfileModule?.getName?.() || 'Unknown'
+      moduleName: 'UserProfileModule'
     };
   }
 }

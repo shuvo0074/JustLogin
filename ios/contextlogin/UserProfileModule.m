@@ -1,4 +1,4 @@
-#import <React/RCTBridgeModule.h>
+#import <React/RCTTurboModule.h>
 
 /**
  * UserProfileModule.m - Objective-C Bridge for Swift Module

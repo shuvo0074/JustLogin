@@ -4,6 +4,8 @@ import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.uimanager.ViewManager
+import com.facebook.react.turbomodule.core.interfaces.TurboModule
+import com.facebook.react.turbomodule.core.interfaces.TurboModulePackage
 
 /**
  * UserProfilePackage - React Native Package Registration
@@ -19,7 +21,7 @@ import com.facebook.react.uimanager.ViewManager
  * - It's manually registered in MainApplication.kt (not auto-linked)
  * - Without this package, JavaScript can't access our native functionality
  */
-class UserProfilePackage : ReactPackage {
+class UserProfilePackage : ReactPackage, TurboModulePackage {
     
     /**
      * createNativeModules - Core Package Method
@@ -61,5 +63,22 @@ class UserProfilePackage : ReactPackage {
         // Return empty list since we don't have custom UI components
         // Our module only provides data processing functionality
         return emptyList()
+    }
+
+    /**
+     * getModule - Turbo Module Method
+     * 
+     * This method is called by Turbo Module system to get module instances.
+     * It returns a TurboModule instance for the given module name.
+     * 
+     * @param moduleName The name of the module to get
+     * @param reactContext The React Native application context
+     * @return TurboModule instance or null if not found
+     */
+    override fun getModule(moduleName: String, reactContext: ReactApplicationContext): TurboModule? {
+        return when (moduleName) {
+            "UserProfileModule" -> UserProfileModule(reactContext)
+            else -> null
+        }
     }
 }

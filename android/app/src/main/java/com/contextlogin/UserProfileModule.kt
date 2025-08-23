@@ -1,7 +1,9 @@
 package com.contextlogin
 
 import com.facebook.react.bridge.*
-import com.facebook.react.modules.core.DeviceEventManagerModule
+import com.facebook.react.turbomodule.core.CallInvokerHolderImpl
+import com.facebook.react.turbomodule.core.interfaces.CallInvokerHolder
+import com.facebook.react.turbomodule.core.interfaces.TurboModule
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
@@ -21,7 +23,7 @@ import kotlin.math.abs
  * - Promise: React Native's way of handling async results
  * - Arguments: Helper class for creating bridge-compatible data structures
  */
-class UserProfileModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class UserProfileModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext), TurboModule {
 
     /**
      * getName() - Module Identifier

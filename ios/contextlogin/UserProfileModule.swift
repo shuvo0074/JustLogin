@@ -1,5 +1,6 @@
 import Foundation
 import React
+import React_RCTTurboModule
 
 /**
  * UserProfileModule - Native iOS Module for React Native
@@ -18,7 +19,7 @@ import React
  */
 
 @objc(UserProfileModule)
-class UserProfileModule: NSObject {
+class UserProfileModule: NSObject, RCTTurboModule {
   
   /**
    * requiresMainQueueSetup - Threading Configuration
