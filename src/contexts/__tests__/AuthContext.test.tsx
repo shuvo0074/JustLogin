@@ -1,3 +1,24 @@
+/**
+ * AuthContext.test.tsx - Authentication Context Test Suite
+ * 
+ * This test file validates the authentication context's state management,
+ * authentication operations, and context provider functionality.
+ * 
+ * Test Coverage:
+ * - Context provider initialization
+ * - Authentication state management
+ * - Login/logout functionality
+ * - Form state management
+ * - Password visibility toggling
+ * - Error handling and recovery
+ * - Context hook usage
+ * 
+ * Dependencies:
+ * - React Testing Library for component testing
+ * - Mocked auth service for testing different scenarios
+ * - Test components for context access
+ */
+
 import React from 'react';
 import { render, act, waitFor } from '@testing-library/react-native';
 import { View, Text, TouchableOpacity } from 'react-native';
@@ -5,11 +26,16 @@ import { AuthProvider, useAuth } from '../AuthContext';
 import { authService } from '../../services/authService';
 import { LoginCredentials, SignupCredentials, User } from '../../types/auth';
 
-// Mock the authService
+// Mock the authService to control authentication responses in tests
 jest.mock('../../services/authService');
 const mockedAuthService = authService as jest.Mocked<typeof authService>;
 
-// Test component to access context
+/**
+ * Test Component for Context Access
+ * 
+ * This component uses the useAuth hook to access authentication context
+ * and displays the current state for testing purposes.
+ */
 const TestComponent: React.FC = () => {
   const auth = useAuth();
   return (
@@ -24,14 +50,33 @@ const TestComponent: React.FC = () => {
   );
 };
 
+/**
+ * Test Suite: Authentication Context
+ * 
+ * Tests the authentication context that manages user authentication state,
+ * login/logout operations, and form management across the application.
+ */
 describe('AuthContext', () => {
+  // Clear all mocks before each test to ensure clean state
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
+  /**
+   * Test Group: AuthProvider Component
+   * 
+   * Tests the context provider component that wraps the application
+   * and provides authentication state and methods.
+   */
   describe('AuthProvider', () => {
+    /**
+     * Test: Initial State Provision
+     * 
+     * Validates that the AuthProvider provides correct initial state
+     * when first mounted without any authentication.
+     */
     it('should provide initial state correctly', async () => {
-      // Mock auth service to return null immediately
+      // Mock auth service to return null immediately (not authenticated)
       mockedAuthService.getCurrentUser.mockResolvedValue(null);
 
       const { getByTestId } = render(
@@ -40,11 +85,12 @@ describe('AuthContext', () => {
         </AuthProvider>
       );
 
-      // Wait for auth check to complete
+      // Wait for auth check to complete before assertions
       await waitFor(() => {
         expect(getByTestId('isLoading').props.children).toBe('false');
       });
 
+      // Should provide correct initial state
       expect(getByTestId('user').props.children).toBe('no-user');
       expect(getByTestId('isAuthenticated').props.children).toBe('false');
       expect(getByTestId('error').props.children).toBe('no-error');
@@ -52,6 +98,12 @@ describe('AuthContext', () => {
       expect(getByTestId('signupForm').props.children).toBe('{"name":"","email":"","password":"","confirmPassword":""}');
     });
 
+    /**
+     * Test: Authentication Status Check on Mount
+     * 
+     * Validates that the AuthProvider checks authentication status
+     * when first mounted and updates state accordingly.
+     */
     it('should check auth status on mount', async () => {
       const mockUser: User = {
         id: '1',
@@ -69,7 +121,7 @@ describe('AuthContext', () => {
         </AuthProvider>
       );
 
-      // Initially should be loading
+      // Initially should be loading while checking auth status
       expect(getByTestId('isLoading').props.children).toBe('true');
 
       // Wait for auth check to complete
@@ -77,11 +129,18 @@ describe('AuthContext', () => {
         expect(getByTestId('isLoading').props.children).toBe('false');
       });
 
+      // Should update state with authenticated user
       expect(getByTestId('user').props.children).toBe('Test User');
       expect(getByTestId('isAuthenticated').props.children).toBe('true');
       expect(mockedAuthService.getCurrentUser).toHaveBeenCalled();
     });
 
+    /**
+     * Test: Authentication Check Error Handling
+     * 
+     * Validates that the AuthProvider gracefully handles errors
+     * during authentication status checks.
+     */
     it('should handle auth check error gracefully', async () => {
       mockedAuthService.getCurrentUser.mockRejectedValue(new Error('Auth check failed'));
 
@@ -95,11 +154,18 @@ describe('AuthContext', () => {
         expect(getByTestId('isLoading').props.children).toBe('false');
       });
 
+      // Should handle error gracefully and remain unauthenticated
       expect(getByTestId('user').props.children).toBe('no-user');
       expect(getByTestId('isAuthenticated').props.children).toBe('false');
     });
   });
 
+  /**
+   * Test Group: useAuth Hook
+   * 
+   * Tests the useAuth hook that provides access to authentication
+   * state and methods within components.
+   */
   describe('useAuth hook', () => {
     const mockUser: User = {
       id: '1',
@@ -109,6 +175,7 @@ describe('AuthContext', () => {
       updatedAt: '2023-01-01',
     };
 
+    // Set up mock responses for authentication operations
     beforeEach(() => {
       mockedAuthService.login.mockResolvedValue({
         user: mockUser,
@@ -119,8 +186,15 @@ describe('AuthContext', () => {
         token: 'mock-token',
       });
       mockedAuthService.logout.mockResolvedValue();
+      mockedAuthService.getCurrentUser.mockResolvedValue(mockUser);
     });
 
+    /**
+     * Test: Login Functionality
+     * 
+     * Validates that the login method works correctly and updates
+     * authentication state upon successful login.
+     */
     it('should provide login functionality', async () => {
       const TestLoginComponent: React.FC = () => {
         const auth = useAuth();
@@ -143,22 +217,32 @@ describe('AuthContext', () => {
         </AuthProvider>
       );
 
+      // Initially should not have a user
       expect(getByTestId('user').props.children).toBe('no-user');
 
+      // Trigger login
       await act(async () => {
         getByTestId('login-button').props.onPress();
       });
 
+      // Wait for login to complete and verify state update
       await waitFor(() => {
         expect(getByTestId('user').props.children).toBe('Test User');
       });
 
+      // Should call auth service with correct credentials
       expect(mockedAuthService.login).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'password123',
       });
     });
 
+    /**
+     * Test: Signup Functionality
+     * 
+     * Validates that the signup method works correctly and updates
+     * authentication state upon successful signup.
+     */
     it('should provide signup functionality', async () => {
       const TestSignupComponent: React.FC = () => {
         const auth = useAuth();
@@ -181,16 +265,20 @@ describe('AuthContext', () => {
         </AuthProvider>
       );
 
+      // Initially should not have a user
       expect(getByTestId('user').props.children).toBe('no-user');
 
+      // Trigger signup
       await act(async () => {
         getByTestId('signup-button').props.onPress();
       });
 
+      // Wait for signup to complete and verify state update
       await waitFor(() => {
         expect(getByTestId('user').props.children).toBe('Test User');
       });
 
+      // Should call auth service with correct credentials
       expect(mockedAuthService.signup).toHaveBeenCalledWith({
         name: 'New User',
         email: 'new@example.com',
@@ -198,6 +286,12 @@ describe('AuthContext', () => {
       });
     });
 
+    /**
+     * Test: Logout Functionality
+     * 
+     * Validates that the logout method works correctly and clears
+     * authentication state upon successful logout.
+     */
     it('should provide logout functionality', async () => {
       const TestLogoutComponent: React.FC = () => {
         const auth = useAuth();
@@ -220,14 +314,17 @@ describe('AuthContext', () => {
         </AuthProvider>
       );
 
+      // Wait for initial auth check to complete
       await waitFor(() => {
         expect(getByTestId('user').props.children).toBe('Test User');
       });
 
+      // Trigger logout
       await act(async () => {
         getByTestId('logout-button').props.onPress();
       });
 
+      // Wait for logout to complete and verify state update
       await waitFor(() => {
         expect(getByTestId('user').props.children).toBe('no-user');
       });
@@ -235,6 +332,12 @@ describe('AuthContext', () => {
       expect(mockedAuthService.logout).toHaveBeenCalled();
     });
 
+    /**
+     * Test: Form Update Functionality
+     * 
+     * Validates that form state can be updated correctly
+     * through the updateLoginForm method.
+     */
     it('should provide form update functionality', () => {
       const TestFormComponent: React.FC = () => {
         const auth = useAuth();
@@ -257,15 +360,24 @@ describe('AuthContext', () => {
         </AuthProvider>
       );
 
+      // Initially should have empty form
       expect(getByTestId('loginForm').props.children).toBe('{"email":"","password":""}');
 
+      // Update email field
       act(() => {
         getByTestId('update-email').props.onPress();
       });
 
+      // Should update form state
       expect(getByTestId('loginForm').props.children).toBe('{"email":"test@example.com","password":""}');
     });
 
+    /**
+     * Test: Error Handling Functionality
+     * 
+     * Validates that error state can be set and cleared
+     * through the setError and clearError methods.
+     */
     it('should provide error handling', () => {
       const TestErrorComponent: React.FC = () => {
         const auth = useAuth();
@@ -288,21 +400,32 @@ describe('AuthContext', () => {
         </AuthProvider>
       );
 
+      // Initially should have no error
       expect(getByTestId('error').props.children).toBe('no-error');
 
+      // Set error
       act(() => {
         getByTestId('set-error').props.onPress();
       });
 
+      // Should display error message
       expect(getByTestId('error').props.children).toBe('Test error');
 
+      // Clear error
       act(() => {
         getByTestId('clear-error').props.onPress();
       });
 
+      // Should clear error message
       expect(getByTestId('error').props.children).toBe('no-error');
     });
 
+    /**
+     * Test: Password Visibility Toggle Functionality
+     * 
+     * Validates that password visibility can be toggled
+     * for both login and signup forms.
+     */
     it('should provide password visibility functionality', () => {
       const TestPasswordComponent: React.FC = () => {
         const auth = useAuth();
@@ -328,37 +451,56 @@ describe('AuthContext', () => {
         </AuthProvider>
       );
 
+      // Initially all passwords should be hidden
       expect(getByTestId('passwordVisibility').props.children).toBe(
         '{"login":{"password":false},"signup":{"password":false,"confirmPassword":false}}'
       );
 
+      // Toggle login password visibility
       act(() => {
         getByTestId('toggle-login').props.onPress();
       });
 
+      // Login password should now be visible
       expect(getByTestId('passwordVisibility').props.children).toBe(
         '{"login":{"password":true},"signup":{"password":false,"confirmPassword":false}}'
       );
 
+      // Toggle signup password visibility
       act(() => {
         getByTestId('toggle-signup-password').props.onPress();
       });
 
+      // Signup password should now be visible
       expect(getByTestId('passwordVisibility').props.children).toBe(
         '{"login":{"password":true},"signup":{"password":true,"confirmPassword":false}}'
       );
 
+      // Toggle signup confirm password visibility
       act(() => {
         getByTestId('toggle-signup-confirm').props.onPress();
       });
 
+      // All passwords should now be visible
       expect(getByTestId('passwordVisibility').props.children).toBe(
         '{"login":{"password":true},"signup":{"password":true,"confirmPassword":true}}'
       );
     });
   });
 
+  /**
+   * Test Group: Error Handling
+   * 
+   * Tests how the context handles various error scenarios
+   * during authentication operations.
+   */
   describe('Error handling', () => {
+    /**
+     * Test: Login Error Handling
+     * 
+     * Validates that login errors are properly handled
+     * and error state is updated accordingly.
+     */
     it('should handle login errors', async () => {
       const errorMessage = 'Login failed';
       mockedAuthService.login.mockRejectedValue(new Error(errorMessage));
@@ -390,15 +532,23 @@ describe('AuthContext', () => {
         </AuthProvider>
       );
 
+      // Trigger login with invalid credentials
       await act(async () => {
         getByTestId('login-button').props.onPress();
       });
 
+      // Should display error message
       await waitFor(() => {
         expect(getByTestId('error').props.children).toBe(errorMessage);
       });
     });
 
+    /**
+     * Test: Signup Error Handling
+     * 
+     * Validates that signup errors are properly handled
+     * and error state is updated accordingly.
+     */
     it('should handle signup errors', async () => {
       const errorMessage = 'Signup failed';
       mockedAuthService.signup.mockRejectedValue(new Error(errorMessage));
@@ -430,10 +580,12 @@ describe('AuthContext', () => {
         </AuthProvider>
       );
 
+      // Trigger signup with invalid credentials
       await act(async () => {
         getByTestId('signup-button').props.onPress();
       });
 
+      // Should display error message
       await waitFor(() => {
         expect(getByTestId('error').props.children).toBe(errorMessage);
       });
