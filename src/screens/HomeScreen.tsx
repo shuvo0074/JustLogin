@@ -7,7 +7,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LoadingSpinner } from '../components/LoadingSpinner';
-import { UserInfoCard } from '../components/UserInfoCard';
 import { PageTitle } from '../components/PageTitle';
 
 export const HomeScreen: React.FC = () => {
@@ -22,8 +21,6 @@ export const HomeScreen: React.FC = () => {
     <SafeAreaView style={styles.container} testID="screen-Home">
       <View style={styles.content}>
         <PageTitle title={t.welcome} />
-
-        <UserInfoCard user={user} />
       </View>
     </SafeAreaView>
   );
