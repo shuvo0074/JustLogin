@@ -54,13 +54,6 @@ export const HomeScreen: React.FC = () => {
 
       <UserInfoCard user={user} />
 
-      <Button
-        title="Logout"
-        variant="danger"
-        onPress={handleLogout}
-        loading={isLoading}
-        disabled={isLoading}
-      />
     </View>
   );
 };
