@@ -6,10 +6,13 @@ import {
   ScrollView,
   Linking,
 } from 'react-native';
+import { useLanguage } from '../contexts/LanguageContext';
 import { PageTitle } from '../components/PageTitle';
 import { Button } from '../components/Button';
 
 export const AboutScreen: React.FC = () => {
+  const { t } = useLanguage();
+  
   const handleContactPress = () => {
     Linking.openURL('mailto:support@nsfgym.com');
   };
@@ -20,58 +23,51 @@ export const AboutScreen: React.FC = () => {
 
   return (
     <ScrollView style={styles.container} testID="screen-About">
-      <PageTitle title="About NSF GYM" variant="large" />
+      <PageTitle title={t.aboutTitle} variant="large" />
 
       <View style={styles.content}>
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Welcome to NSF GYM</Text>
+          <Text style={styles.sectionTitle}>{t.aboutWelcome}</Text>
           <Text style={styles.sectionText}>
-            Never Stop Fighting - Your ultimate fitness companion. We believe in pushing boundaries, 
-            breaking limits, and achieving greatness through dedication and hard work.
+            {t.aboutWelcomeDescription}
           </Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Our Mission</Text>
+          <Text style={styles.sectionTitle}>{t.ourMission}</Text>
           <Text style={styles.sectionText}>
-            To provide a comprehensive fitness platform that empowers individuals to reach their 
-            full potential through innovative training methods, expert guidance, and unwavering support.
+            {t.ourMissionDescription}
           </Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Features</Text>
+          <Text style={styles.sectionTitle}>{t.features}</Text>
           <Text style={styles.sectionText}>
-            • Personalized workout plans{'\n'}
-            • Progress tracking{'\n'}
-            • Expert trainer support{'\n'}
-            • Community challenges{'\n'}
-            • Nutrition guidance{'\n'}
-            • 24/7 access to resources
+            {t.featuresList}
           </Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Version</Text>
+          <Text style={styles.sectionTitle}>{t.version}</Text>
           <Text style={styles.sectionText}>1.0.0</Text>
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contact Us</Text>
+          <Text style={styles.sectionTitle}>{t.contactUs}</Text>
           <Text style={styles.sectionText}>
-            Have questions or need support? We're here to help you on your fitness journey.
+            {t.contactUsDescription}
           </Text>
           
           <View style={styles.buttonContainer}>
             <Button
-              title="Email Support"
+              title={t.emailSupport}
               variant="secondary"
               onPress={handleContactPress}
               style={styles.contactButton}
             />
             
             <Button
-              title="Visit Website"
+              title={t.visitWebsite}
               variant="secondary"
               onPress={handleWebsitePress}
               style={styles.contactButton}

@@ -11,25 +11,28 @@ import { Button } from '../components/Button';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { UserInfoCard } from '../components/UserInfoCard';
 import { PageTitle } from '../components/PageTitle';
+import { LanguagePicker } from '../components/LanguagePicker';
+import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
 
 export const ProfileScreen: React.FC = () => {
   const { user, logout, isLoading } = useAuth();
+  const { t } = useLanguage();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const handleLogout = useCallback(async () => {
     Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
+      t.logoutConfirm,
+      t.logoutConfirmMessage,
       [
         {
-          text: 'Cancel',
+          text: t.cancel,
           style: 'cancel',
         },
         {
-          text: 'Logout',
+          text: t.logout,
           style: 'destructive',
           onPress: async () => {
             try {
@@ -45,34 +48,42 @@ export const ProfileScreen: React.FC = () => {
         },
       ]
     );
-  }, [logout, navigation]);
+  }, [logout, navigation, t]);
 
   if (isLoading) {
-    return <LoadingSpinner message='Logging out...' />;
+    return <LoadingSpinner message={t.loading} />;
   }
 
   return (
     <ScrollView style={styles.container} testID="screen-Profile">
-      <PageTitle title="Profile" variant="large" />
+      <PageTitle title={t.profileTitle} variant="large" />
 
       <UserInfoCard user={user} showId={true} showTimestamps={true} />
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account Settings</Text>
+        <Text style={styles.sectionTitle}>{t.accountSettings}</Text>
         <Text style={styles.sectionDescription}>
-          Manage your account information and preferences.
+          {t.accountSettingsDescription}
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Privacy & Security</Text>
+        <Text style={styles.sectionTitle}>{t.privacySecurity}</Text>
         <Text style={styles.sectionDescription}>
-          Control your privacy settings and security options.
+          {t.privacySecurityDescription}
         </Text>
       </View>
 
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t.language}</Text>
+        <Text style={styles.sectionDescription}>
+          {t.languageDescription}
+        </Text>
+        <LanguagePicker style={styles.languagePicker} />
+      </View>
+
       <Button
-        title="Logout"
+        title={t.logout}
         variant="danger"
         onPress={handleLogout}
         loading={isLoading}
@@ -111,5 +122,8 @@ const styles = StyleSheet.create({
   logoutButton: {
     marginTop: 20,
     marginBottom: 40,
+  },
+  languagePicker: {
+    marginTop: 10,
   },
 });

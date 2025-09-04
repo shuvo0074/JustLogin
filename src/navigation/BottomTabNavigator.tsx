@@ -5,6 +5,7 @@ import { MainTabParamList } from '../types/navigation';
 import { HomeScreen } from '../screens/HomeScreen';
 import { ProfileScreen } from '../screens/ProfileScreen';
 import { AboutScreen } from '../screens/AboutScreen';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -31,6 +32,8 @@ const TabIcon: React.FC<{ name: string; focused: boolean }> = ({ name, focused }
 };
 
 export const BottomTabNavigator: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -51,7 +54,7 @@ export const BottomTabNavigator: React.FC = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          title: 'Home',
+          title: t.homeTab,
           tabBarTestID: 'tab-home',
         }}
       />
@@ -59,7 +62,7 @@ export const BottomTabNavigator: React.FC = () => {
         name="Profile"
         component={ProfileScreen}
         options={{
-          title: 'Profile',
+          title: t.profileTab,
           tabBarTestID: 'tab-profile',
         }}
       />
@@ -67,7 +70,7 @@ export const BottomTabNavigator: React.FC = () => {
         name="About"
         component={AboutScreen}
         options={{
-          title: 'About',
+          title: t.aboutTab,
           tabBarTestID: 'tab-about',
         }}
       />

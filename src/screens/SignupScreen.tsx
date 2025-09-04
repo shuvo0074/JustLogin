@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigation } from '@react-navigation/native';
 import { AuthStackNavigationProp } from '../types/navigation';
 import { InputField } from '../components/InputField';
@@ -16,6 +17,7 @@ import { Button } from '../components/Button';
 
 export const SignupScreen: React.FC = () => {
   const navigation = useNavigation<AuthStackNavigationProp>();
+  const { t } = useLanguage();
   const {
     handleSignup,
     isLoading,
@@ -65,7 +67,7 @@ export const SignupScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>Create Account</Text>
+        <Text style={styles.title}>{t.signupTitle}</Text>
 
         {error && (
           <View style={styles.errorContainer}>
@@ -74,7 +76,7 @@ export const SignupScreen: React.FC = () => {
         )}
 
         <InputField
-          placeholder="Full Name"
+          placeholder={t.name}
           value={signupForm.name}
           onChangeText={(value) => handleFieldChange('name', value)}
           autoCapitalize="words"
@@ -82,7 +84,7 @@ export const SignupScreen: React.FC = () => {
         />
 
         <InputField
-          placeholder="Email"
+          placeholder={t.email}
           value={signupForm.email}
           onChangeText={(value) => handleFieldChange('email', value)}
           keyboardType="email-address"
@@ -91,21 +93,21 @@ export const SignupScreen: React.FC = () => {
         />
 
         <PasswordInput
-          placeholder="Password"
+          placeholder={t.password}
           value={signupForm.password}
           onChangeText={(value) => handleFieldChange('password', value)}
           autoComplete="new-password"
         />
 
         <PasswordInput
-          placeholder="Confirm Password"
+          placeholder={t.confirmPassword}
           value={signupForm.confirmPassword}
           onChangeText={(value) => handleFieldChange('confirmPassword', value)}
           autoComplete="new-password"
         />
 
         <Button
-          title="Create Account"
+          title={t.signupButton}
           onPress={onSignupPress}
           loading={isLoading}
           disabled={isLoading}
@@ -113,9 +115,9 @@ export const SignupScreen: React.FC = () => {
         />
 
         <View style={styles.secondaryButtonContainer}>
-          <Text style={styles.secondaryButtonText}>Already have an account? </Text>
+          <Text style={styles.secondaryButtonText}>{t.alreadyHaveAccount}</Text>
           <Button
-            title="Login"
+            title={t.loginLink}
             variant="secondary"
             size="small"
             onPress={onLoginPress}

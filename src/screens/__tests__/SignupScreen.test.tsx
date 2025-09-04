@@ -2,6 +2,7 @@ import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { SignupScreen } from '../SignupScreen';
 import { Provider } from 'react-redux';
+import { LanguageProvider } from '../../contexts/LanguageContext';
 import { store } from '../../store';
 import { authService } from '../../services/authService';
 
@@ -52,7 +53,9 @@ describe('SignupScreen', () => {
   const renderSignupScreen = () => {
     return render(
       <Provider store={store}>
-        <SignupScreen />
+        <LanguageProvider>
+          <SignupScreen />
+        </LanguageProvider>
       </Provider>
     );
   };
@@ -61,7 +64,7 @@ describe('SignupScreen', () => {
     it('should render signup form correctly', () => {
       const { getByPlaceholderText, getByText, getByTestId } = renderSignupScreen();
 
-      expect(getByPlaceholderText('Full Name')).toBeTruthy();
+      expect(getByPlaceholderText('Name')).toBeTruthy();
       expect(getByPlaceholderText('Email')).toBeTruthy();
       expect(getByPlaceholderText('Password')).toBeTruthy();
       expect(getByPlaceholderText('Confirm Password')).toBeTruthy();
@@ -81,7 +84,7 @@ describe('SignupScreen', () => {
   describe('Form interactions', () => {
     it('should update name field', () => {
       const { getByPlaceholderText } = renderSignupScreen();
-      const nameInput = getByPlaceholderText('Full Name');
+      const nameInput = getByPlaceholderText('Name');
 
       fireEvent.changeText(nameInput, 'John Doe');
 
@@ -156,7 +159,7 @@ describe('SignupScreen', () => {
   describe('Form validation', () => {
     it('should show error for empty name on blur', () => {
       const { getByPlaceholderText, getByTestId } = renderSignupScreen();
-      const nameInput = getByPlaceholderText('Full Name');
+      const nameInput = getByPlaceholderText('Name');
 
       fireEvent(nameInput, 'blur');
 
@@ -231,7 +234,7 @@ describe('SignupScreen', () => {
 
     it('should not show error for valid fields', () => {
       const { getByPlaceholderText, queryByText } = renderSignupScreen();
-      const nameInput = getByPlaceholderText('Full Name');
+      const nameInput = getByPlaceholderText('Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
@@ -260,7 +263,7 @@ describe('SignupScreen', () => {
   describe('Signup functionality', () => {
     it('should signup successfully with valid credentials', async () => {
       const { getByPlaceholderText, getByTestId } = renderSignupScreen();
-      const nameInput = getByPlaceholderText('Full Name');
+      const nameInput = getByPlaceholderText('Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
@@ -284,7 +287,7 @@ describe('SignupScreen', () => {
       mockedAuthService.signup.mockRejectedValue(new Error(errorMessage));
 
       const { getByPlaceholderText, getByTestId } = renderSignupScreen();
-      const nameInput = getByPlaceholderText('Full Name');
+      const nameInput = getByPlaceholderText('Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
@@ -305,7 +308,7 @@ describe('SignupScreen', () => {
 
     it('should not signup with invalid email format', async () => {
       const { getByPlaceholderText, getByTestId } = renderSignupScreen();
-      const nameInput = getByPlaceholderText('Full Name');
+      const nameInput = getByPlaceholderText('Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
@@ -326,7 +329,7 @@ describe('SignupScreen', () => {
 
     it('should not signup with short password', async () => {
       const { getByPlaceholderText, getByTestId } = renderSignupScreen();
-      const nameInput = getByPlaceholderText('Full Name');
+      const nameInput = getByPlaceholderText('Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
@@ -347,7 +350,7 @@ describe('SignupScreen', () => {
 
     it('should not signup with password mismatch', async () => {
       const { getByPlaceholderText, getByTestId } = renderSignupScreen();
-      const nameInput = getByPlaceholderText('Full Name');
+      const nameInput = getByPlaceholderText('Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
@@ -409,7 +412,7 @@ describe('SignupScreen', () => {
       );
 
       const { getByPlaceholderText, getByTestId } = renderSignupScreen();
-      const nameInput = getByPlaceholderText('Full Name');
+      const nameInput = getByPlaceholderText('Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');

@@ -1,0 +1,91 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "signup": "S'inscrire",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "name": "Nom",
+    "confirmPassword": "Confirmer le mot de passe"
+  },
+  "splash": {
+    "title": "NSF GYM",
+    "subtitle": "NE JAMAIS ARRÊTER DE SE BATTRE",
+    "loading": "Chargement..."
+  },
+  "login": {
+    "title": "Connexion",
+    "button": "Se connecter",
+    "hint": "Utilisez test@example.com / password pour tester",
+    "dontHaveAccount": "Vous n'avez pas de compte ? ",
+    "signUpLink": "S'inscrire"
+  },
+  "signup": {
+    "title": "Créer un compte",
+    "button": "Créer un compte",
+    "alreadyHaveAccount": "Vous avez déjà un compte ? ",
+    "loginLink": "Connexion"
+  },
+  "home": {
+    "title": "Bienvenue !",
+    "welcome": "Bienvenue !"
+  },
+  "profile": {
+    "title": "Profil",
+    "accountSettings": "Paramètres du compte",
+    "accountSettingsDescription": "Gérez les informations de votre compte et vos préférences.",
+    "privacySecurity": "Confidentialité et sécurité",
+    "privacySecurityDescription": "Contrôlez vos paramètres de confidentialité et vos options de sécurité.",
+    "language": "Langue",
+    "languageDescription": "Choisissez votre langue préférée pour l'application."
+  },
+  "about": {
+    "title": "À propos de NSF GYM",
+    "welcome": "Bienvenue à NSF GYM",
+    "welcomeDescription": "Ne jamais arrêter de se battre - Votre compagnon fitness ultime. Nous croyons en repousser les limites, briser les barrières et atteindre la grandeur grâce au dévouement et au travail acharné.",
+    "ourMission": "Notre mission",
+    "ourMissionDescription": "Fournir une plateforme fitness complète qui permet aux individus d'atteindre leur plein potentiel grâce à des méthodes d'entraînement innovantes, des conseils d'experts et un soutien inébranlable.",
+    "features": "Fonctionnalités",
+    "featuresList": "• Plans d'entraînement personnalisés\n• Suivi des progrès\n• Support d'entraîneurs experts\n• Défis communautaires\n• Conseils nutritionnels\n• Accès 24/7 aux ressources",
+    "version": "Version",
+    "contactUs": "Nous contacter",
+    "contactUsDescription": "Vous avez des questions ou besoin d'aide ? Nous sommes là pour vous aider dans votre parcours fitness.",
+    "emailSupport": "Support par e-mail",
+    "visitWebsite": "Visiter le site web",
+    "copyright": "© 2024 NSF GYM. Tous droits réservés.",
+    "neverStopFighting": "Ne jamais arrêter de se battre !"
+  },
+  "tabs": {
+    "home": "Accueil",
+    "profile": "Profil",
+    "about": "À propos"
+  },
+  "validation": {
+    "emailRequired": "L'e-mail est requis",
+    "passwordRequired": "Le mot de passe est requis",
+    "nameRequired": "Le nom complet est requis",
+    "confirmPasswordRequired": "La confirmation du mot de passe est requise",
+    "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "invalidCredentials": "Identifiants invalides",
+    "loginFailed": "Échec de la connexion",
+    "signupFailed": "Échec de l'inscription"
+  },
+  "logout": {
+    "confirm": "Déconnexion",
+    "confirmMessage": "Êtes-vous sûr de vouloir vous déconnecter ?"
+  },
+  "userInfo": {
+    "nameLabel": "Nom :",
+    "emailLabel": "E-mail :",
+    "userIdLabel": "ID utilisateur :",
+    "createdLabel": "Créé :",
+    "updatedLabel": "Mis à jour :"
+  }
+}

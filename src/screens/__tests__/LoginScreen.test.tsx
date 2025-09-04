@@ -2,6 +2,7 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { LoginScreen } from '../LoginScreen';
 import { Provider } from 'react-redux';
+import { LanguageProvider } from '../../contexts/LanguageContext';
 import { store } from '../../store';
 import { authService } from '../../services/authService';
 
@@ -60,7 +61,9 @@ describe('LoginScreen', () => {
   const renderLoginScreen = () => {
     return render(
       <Provider store={store}>
-        <LoginScreen />
+        <LanguageProvider>
+          <LoginScreen />
+        </LanguageProvider>
       </Provider>
     );
   };
@@ -272,7 +275,9 @@ describe('LoginScreen', () => {
       // Simulate error state by directly calling setError
       const { getByTestId } = render(
         <Provider store={store}>
-          <LoginScreen />
+          <LanguageProvider>
+            <LoginScreen />
+          </LanguageProvider>
         </Provider>
       );
 

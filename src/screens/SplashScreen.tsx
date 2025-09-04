@@ -9,6 +9,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../contexts/LanguageContext';
 import { RootStackParamList } from '../types/navigation';
 
 type SplashScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Splash'>;
@@ -16,6 +17,7 @@ type SplashScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Splas
 const SplashScreen: React.FC = () => {
     const navigation = useNavigation<SplashScreenNavigationProp>();
     const { checkAuthStatus, isAuthenticated, isLoading } = useAuth();
+    const { t } = useLanguage();
 
     useEffect(() => {
         const initializeApp = async () => {
@@ -69,7 +71,7 @@ const SplashScreen: React.FC = () => {
                         testID="activity-indicator"
                     />
                     <Text style={styles.loadingText}>
-                        Loading...
+                        {t.splashLoading}
                     </Text>
                 </View>
             </View>

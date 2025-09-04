@@ -1,0 +1,91 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "logout": "Logout",
+    "login": "Login",
+    "signup": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "confirmPassword": "Confirm Password"
+  },
+  "splash": {
+    "title": "NSF GYM",
+    "subtitle": "NEVER STOP FIGHTING",
+    "loading": "Loading..."
+  },
+  "login": {
+    "title": "Login",
+    "button": "Login",
+    "hint": "Use test@example.com / password to test",
+    "dontHaveAccount": "Don't have an account? ",
+    "signUpLink": "Sign up"
+  },
+  "signup": {
+    "title": "Create Account",
+    "button": "Create Account",
+    "alreadyHaveAccount": "Already have an account? ",
+    "loginLink": "Login"
+  },
+  "home": {
+    "title": "Welcome!",
+    "welcome": "Welcome!"
+  },
+  "profile": {
+    "title": "Profile",
+    "accountSettings": "Account Settings",
+    "accountSettingsDescription": "Manage your account information and preferences.",
+    "privacySecurity": "Privacy & Security",
+    "privacySecurityDescription": "Control your privacy settings and security options.",
+    "language": "Language",
+    "languageDescription": "Choose your preferred language for the app."
+  },
+  "about": {
+    "title": "About NSF GYM",
+    "welcome": "Welcome to NSF GYM",
+    "welcomeDescription": "Never Stop Fighting - Your ultimate fitness companion. We believe in pushing boundaries, breaking limits, and achieving greatness through dedication and hard work.",
+    "ourMission": "Our Mission",
+    "ourMissionDescription": "To provide a comprehensive fitness platform that empowers individuals to reach their full potential through innovative training methods, expert guidance, and unwavering support.",
+    "features": "Features",
+    "featuresList": "• Personalized workout plans\n• Progress tracking\n• Expert trainer support\n• Community challenges\n• Nutrition guidance\n• 24/7 access to resources",
+    "version": "Version",
+    "contactUs": "Contact Us",
+    "contactUsDescription": "Have questions or need support? We're here to help you on your fitness journey.",
+    "emailSupport": "Email Support",
+    "visitWebsite": "Visit Website",
+    "copyright": "© 2024 NSF GYM. All rights reserved.",
+    "neverStopFighting": "Never Stop Fighting!"
+  },
+  "tabs": {
+    "home": "Home",
+    "profile": "Profile",
+    "about": "About"
+  },
+  "validation": {
+    "emailRequired": "Email is required",
+    "passwordRequired": "Password is required",
+    "nameRequired": "Full name is required",
+    "confirmPasswordRequired": "Confirm password is required",
+    "invalidEmail": "Please enter a valid email address",
+    "passwordTooShort": "Password must be at least 6 characters long",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "invalidCredentials": "Invalid credentials",
+    "loginFailed": "Login failed",
+    "signupFailed": "Signup failed"
+  },
+  "logout": {
+    "confirm": "Logout",
+    "confirmMessage": "Are you sure you want to logout?"
+  },
+  "userInfo": {
+    "nameLabel": "Name:",
+    "emailLabel": "Email:",
+    "userIdLabel": "User ID:",
+    "createdLabel": "Created:",
+    "updatedLabel": "Updated:"
+  }
+}

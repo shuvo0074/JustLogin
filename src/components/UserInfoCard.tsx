@@ -6,6 +6,7 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface UserInfo {
   id: string;
@@ -32,35 +33,37 @@ export const UserInfoCard: React.FC<UserInfoCardProps> = ({
   showId = true,
   showTimestamps = false,
 }) => {
+  const { t } = useLanguage();
+  
   if (!user) {
     return null;
   }
 
   return (
     <View style={[styles.container, containerStyle]}>
-      <Text style={[styles.label, labelStyle]}>Name:</Text>
+      <Text style={[styles.label, labelStyle]}>{t.nameLabel}</Text>
       <Text style={[styles.value, valueStyle]}>{user.name}</Text>
       
-      <Text style={[styles.label, labelStyle]}>Email:</Text>
+      <Text style={[styles.label, labelStyle]}>{t.emailLabel}</Text>
       <Text style={[styles.value, valueStyle]}>{user.email}</Text>
       
       {showId && (
         <>
-          <Text style={[styles.label, labelStyle]}>User ID:</Text>
+          <Text style={[styles.label, labelStyle]}>{t.userIdLabel}</Text>
           <Text style={[styles.value, valueStyle]}>{user.id}</Text>
         </>
       )}
 
       {showTimestamps && user.createdAt && (
         <>
-          <Text style={[styles.label, labelStyle]}>Created:</Text>
+          <Text style={[styles.label, labelStyle]}>{t.createdLabel}</Text>
           <Text style={[styles.value, valueStyle]}>{user.createdAt}</Text>
         </>
       )}
 
       {showTimestamps && user.updatedAt && (
         <>
-          <Text style={[styles.label, labelStyle]}>Updated:</Text>
+          <Text style={[styles.label, labelStyle]}>{t.updatedLabel}</Text>
           <Text style={[styles.value, valueStyle]}>{user.updatedAt}</Text>
         </>
       )}

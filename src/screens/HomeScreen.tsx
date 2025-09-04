@@ -5,6 +5,7 @@ import {
   Alert,
 } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Button } from '../components/Button';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { UserInfoCard } from '../components/UserInfoCard';
@@ -14,19 +15,20 @@ import { AuthStackNavigationProp } from '../types/navigation';
 
 export const HomeScreen: React.FC = () => {
   const { user, logout, isLoading } = useAuth();
+  const { t } = useLanguage();
   const navigation = useNavigation<AuthStackNavigationProp>();
 
   const handleLogout = useCallback(async () => {
     Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
+      t.logoutConfirm,
+      t.logoutConfirmMessage,
       [
         {
-          text: 'Cancel',
+          text: t.cancel,
           style: 'cancel',
         },
         {
-          text: 'Logout',
+          text: t.logout,
           style: 'destructive',
           onPress: async () => {
             try {
@@ -42,15 +44,15 @@ export const HomeScreen: React.FC = () => {
         },
       ]
     );
-  }, [logout]);
+  }, [logout, t]);
 
   if (isLoading) {
-    return <LoadingSpinner message='Logging out...' />;
+    return <LoadingSpinner message={t.loading} />;
   }
 
   return (
     <View style={styles.container} testID="screen-Home">
-      <PageTitle title="Welcome!" />
+      <PageTitle title={t.welcome} />
 
       <UserInfoCard user={user} />
 

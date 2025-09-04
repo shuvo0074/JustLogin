@@ -19,6 +19,7 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { UserInfoCard } from '../UserInfoCard';
+import { LanguageProvider } from '../../contexts/LanguageContext';
 
 /**
  * Test Suite: UserInfoCard Component
@@ -36,6 +37,15 @@ describe('UserInfoCard', () => {
     updatedAt: '2023-01-02',
   };
 
+  // Helper function to render UserInfoCard with LanguageProvider
+  const renderUserInfoCard = (props: any) => {
+    return render(
+      <LanguageProvider>
+        <UserInfoCard {...props} />
+      </LanguageProvider>
+    );
+  };
+
   /**
    * Test: Basic User Information Display
    * 
@@ -43,7 +53,7 @@ describe('UserInfoCard', () => {
    * when a valid user object is provided.
    */
   it('should render user information correctly', () => {
-    const { getByText } = render(<UserInfoCard user={mockUser} />);
+    const { getByText } = renderUserInfoCard({ user: mockUser });
     
     // Should display all user information fields
     expect(getByText('Name:')).toBeTruthy();
@@ -61,7 +71,7 @@ describe('UserInfoCard', () => {
    * by not rendering any user information.
    */
   it('should not render when user is null', () => {
-    const { queryByText } = render(<UserInfoCard user={null} />);
+    const { queryByText } = renderUserInfoCard({ user: null });
     
     // Should not display any user information when user is null
     expect(queryByText('Name:')).toBeNull();
@@ -76,9 +86,10 @@ describe('UserInfoCard', () => {
    * when showId prop is set to false.
    */
   it('should hide user ID when showId is false', () => {
-    const { getByText, queryByText } = render(
-      <UserInfoCard user={mockUser} showId={false} />
-    );
+    const { getByText, queryByText } = renderUserInfoCard({
+      user: mockUser,
+      showId: false
+    });
     
     // Should show name and email
     expect(getByText('Name:')).toBeTruthy();
@@ -94,9 +105,10 @@ describe('UserInfoCard', () => {
    * when showTimestamps prop is set to true.
    */
   it('should show timestamps when showTimestamps is true', () => {
-    const { getByText } = render(
-      <UserInfoCard user={mockUser} showTimestamps={true} />
-    );
+    const { getByText } = renderUserInfoCard({
+      user: mockUser,
+      showTimestamps: true
+    });
     
     // Should display timestamp information when enabled
     expect(getByText('Created:')).toBeTruthy();
@@ -113,9 +125,10 @@ describe('UserInfoCard', () => {
    */
   it('should apply custom styles', () => {
     const customStyle = { backgroundColor: '#f0f0f0' };
-    const { getByText } = render(
-      <UserInfoCard user={mockUser} containerStyle={customStyle} />
-    );
+    const { getByText } = renderUserInfoCard({
+      user: mockUser,
+      containerStyle: customStyle
+    });
     
     // Should render with custom styles applied
     expect(getByText('Name:')).toBeTruthy();
@@ -134,9 +147,10 @@ describe('UserInfoCard', () => {
       email: 'john@example.com',
     };
     
-    const { getByText, queryByText } = render(
-      <UserInfoCard user={userWithoutTimestamps} showTimestamps={true} />
-    );
+    const { getByText, queryByText } = renderUserInfoCard({
+      user: userWithoutTimestamps,
+      showTimestamps: true
+    });
     
     // Should show basic user information
     expect(getByText('Name:')).toBeTruthy();

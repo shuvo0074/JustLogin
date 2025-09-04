@@ -8,6 +8,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../contexts/LanguageContext';
 import { useNavigation } from '@react-navigation/native';
 import { AuthStackNavigationProp } from '../types/navigation';
 import { InputField } from '../components/InputField';
@@ -16,6 +17,7 @@ import { Button } from '../components/Button';
 
 export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<AuthStackNavigationProp>();
+  const { t } = useLanguage();
   const {
     handleLogin,
     isLoading,
@@ -65,7 +67,7 @@ export const LoginScreen: React.FC = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.title}>Login</Text>
+        <Text style={styles.title}>{t.loginTitle}</Text>
 
         {error && (
           <View style={styles.errorContainer}>
@@ -74,7 +76,7 @@ export const LoginScreen: React.FC = () => {
         )}
 
         <InputField
-          placeholder="Email"
+          placeholder={t.email}
           value={loginForm.email}
           onChangeText={(value) => handleFieldChange('email', value)}
           keyboardType="email-address"
@@ -83,14 +85,14 @@ export const LoginScreen: React.FC = () => {
         />
 
         <PasswordInput
-          placeholder="Password"
+          placeholder={t.password}
           value={loginForm.password}
           onChangeText={(value) => handleFieldChange('password', value)}
           autoComplete="password"
         />
 
         <Button
-          title="Login"
+          title={t.loginButton}
           onPress={onLoginPress}
           loading={isLoading}
           disabled={isLoading}
@@ -98,9 +100,9 @@ export const LoginScreen: React.FC = () => {
         />
 
         <View style={styles.secondaryButtonContainer}>
-          <Text style={styles.secondaryButtonText}>Don't have an account? </Text>
+          <Text style={styles.secondaryButtonText}>{t.dontHaveAccount}</Text>
           <Button
-            title="Sign up"
+            title={t.signUpLink}
             variant="secondary"
             size="small"
             onPress={onSignupPress}
@@ -110,7 +112,7 @@ export const LoginScreen: React.FC = () => {
         </View>
 
         <Text style={styles.hint}>
-          Use test@example.com / password to test
+          {t.loginHint}
         </Text>
       </ScrollView>
     </KeyboardAvoidingView>

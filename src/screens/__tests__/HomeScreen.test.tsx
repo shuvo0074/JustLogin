@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import { HomeScreen } from '../HomeScreen';
 import { Provider } from 'react-redux';
+import { LanguageProvider } from '../../contexts/LanguageContext';
 import { configureStore } from '@reduxjs/toolkit';
 
 describe('HomeScreen', () => {
@@ -25,7 +26,9 @@ describe('HomeScreen', () => {
 
     const { getByText } = render(
       <Provider store={mockStore}>
-        <HomeScreen />
+        <LanguageProvider>
+          <HomeScreen />
+        </LanguageProvider>
       </Provider>
     );
 

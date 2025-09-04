@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import SplashScreen from '../SplashScreen';
 import authReducer from '../../store/slices/authSlice';
+import { LanguageProvider } from '../../contexts/LanguageContext';
 
 // Mock the useAuth hook
 const mockCheckAuthStatus = jest.fn();
@@ -59,7 +60,9 @@ const createMockStore = (initialState = {}) => {
 const renderWithProvider = (store = createMockStore()) => {
   return render(
     <Provider store={store}>
-      <SplashScreen />
+      <LanguageProvider>
+        <SplashScreen />
+      </LanguageProvider>
     </Provider>
   );
 };
