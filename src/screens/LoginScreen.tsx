@@ -3,6 +3,9 @@ import {
   View,
   Text,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
@@ -41,64 +44,79 @@ export const LoginScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container} testID="screen-Login">
-      <Text style={styles.title}>Login</Text>
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      testID="screen-Login"
+    >
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>Login</Text>
 
-      {error && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      )}
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
 
-      <InputField
-        placeholder="Email"
-        value={loginForm.email}
-        onChangeText={(value) => handleFieldChange('email', value)}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoComplete="email"
-      />
-
-      <PasswordInput
-        placeholder="Password"
-        value={loginForm.password}
-        onChangeText={(value) => handleFieldChange('password', value)}
-        autoComplete="password"
-      />
-
-      <Button
-        title="Login"
-        onPress={onLoginPress}
-        loading={isLoading}
-        disabled={isLoading}
-        style={styles.loginButton}
-      />
-
-      <View style={styles.secondaryButtonContainer}>
-        <Text style={styles.secondaryButtonText}>Don't have an account? </Text>
-        <Button
-          title="Sign up"
-          variant="secondary"
-          size="small"
-          onPress={onSignupPress}
-          disabled={isLoading}
-          containerStyle={styles.signupLink}
+        <InputField
+          placeholder="Email"
+          value={loginForm.email}
+          onChangeText={(value) => handleFieldChange('email', value)}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoComplete="email"
         />
-      </View>
 
-      <Text style={styles.hint}>
-        Use test@example.com / password to test
-      </Text>
-    </View>
+        <PasswordInput
+          placeholder="Password"
+          value={loginForm.password}
+          onChangeText={(value) => handleFieldChange('password', value)}
+          autoComplete="password"
+        />
+
+        <Button
+          title="Login"
+          onPress={onLoginPress}
+          loading={isLoading}
+          disabled={isLoading}
+          style={styles.loginButton}
+        />
+
+        <View style={styles.secondaryButtonContainer}>
+          <Text style={styles.secondaryButtonText}>Don't have an account? </Text>
+          <Button
+            title="Sign up"
+            variant="secondary"
+            size="small"
+            onPress={onSignupPress}
+            disabled={isLoading}
+            containerStyle={styles.signupLink}
+          />
+        </View>
+
+        <Text style={styles.hint}>
+          Use test@example.com / password to test
+        </Text>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    paddingTop: 60,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,

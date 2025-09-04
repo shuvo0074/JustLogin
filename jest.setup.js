@@ -40,6 +40,12 @@ jest.mock('react-native', () => ({
   },
   StatusBar: 'StatusBar',
   useColorScheme: () => 'light',
+  Platform: {
+    OS: 'ios',
+    select: jest.fn(),
+  },
+  KeyboardAvoidingView: 'KeyboardAvoidingView',
+  ScrollView: 'ScrollView',
 }));
 
 // Global test utilities

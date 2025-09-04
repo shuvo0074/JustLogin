@@ -3,6 +3,9 @@ import {
   View,
   Text,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
@@ -41,75 +44,90 @@ export const SignupScreen: React.FC = () => {
   };
 
   return (
-    <View style={styles.container} testID="screen-Signup">
-      <Text style={styles.title}>Create Account</Text>
+    <KeyboardAvoidingView 
+      style={styles.container} 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      testID="screen-Signup"
+    >
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>Create Account</Text>
 
-      {error && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      )}
+        {error && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        )}
 
-      <InputField
-        placeholder="Full Name"
-        value={signupForm.name}
-        onChangeText={(value) => handleFieldChange('name', value)}
-        autoCapitalize="words"
-        autoComplete="name"
-      />
-
-      <InputField
-        placeholder="Email"
-        value={signupForm.email}
-        onChangeText={(value) => handleFieldChange('email', value)}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        autoComplete="email"
-      />
-
-      <PasswordInput
-        placeholder="Password"
-        value={signupForm.password}
-        onChangeText={(value) => handleFieldChange('password', value)}
-        autoComplete="new-password"
-      />
-
-      <PasswordInput
-        placeholder="Confirm Password"
-        value={signupForm.confirmPassword}
-        onChangeText={(value) => handleFieldChange('confirmPassword', value)}
-        autoComplete="new-password"
-      />
-
-      <Button
-        title="Create Account"
-        onPress={onSignupPress}
-        loading={isLoading}
-        disabled={isLoading}
-        style={styles.signupButton}
-      />
-
-      <View style={styles.secondaryButtonContainer}>
-        <Text style={styles.secondaryButtonText}>Already have an account? </Text>
-        <Button
-          title="Login"
-          variant="secondary"
-          size="small"
-          onPress={onLoginPress}
-          disabled={isLoading}
-          containerStyle={styles.loginLink}
+        <InputField
+          placeholder="Full Name"
+          value={signupForm.name}
+          onChangeText={(value) => handleFieldChange('name', value)}
+          autoCapitalize="words"
+          autoComplete="name"
         />
-      </View>
-    </View>
+
+        <InputField
+          placeholder="Email"
+          value={signupForm.email}
+          onChangeText={(value) => handleFieldChange('email', value)}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          autoComplete="email"
+        />
+
+        <PasswordInput
+          placeholder="Password"
+          value={signupForm.password}
+          onChangeText={(value) => handleFieldChange('password', value)}
+          autoComplete="new-password"
+        />
+
+        <PasswordInput
+          placeholder="Confirm Password"
+          value={signupForm.confirmPassword}
+          onChangeText={(value) => handleFieldChange('confirmPassword', value)}
+          autoComplete="new-password"
+        />
+
+        <Button
+          title="Create Account"
+          onPress={onSignupPress}
+          loading={isLoading}
+          disabled={isLoading}
+          style={styles.signupButton}
+        />
+
+        <View style={styles.secondaryButtonContainer}>
+          <Text style={styles.secondaryButtonText}>Already have an account? </Text>
+          <Button
+            title="Login"
+            variant="secondary"
+            size="small"
+            onPress={onLoginPress}
+            disabled={isLoading}
+            containerStyle={styles.loginLink}
+          />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    paddingTop: 60,
+    paddingBottom: 40,
   },
   title: {
     fontSize: 24,

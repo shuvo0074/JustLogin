@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { store } from '../../store';
 import { authService } from '../../services/authService';
 
+
 // Mock the authService
 jest.mock('../../services/authService');
 const mockedAuthService = authService as jest.Mocked<typeof authService>;
