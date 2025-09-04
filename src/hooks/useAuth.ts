@@ -176,7 +176,8 @@ export const useAuth = () => {
       const response = await signupAction({
         name: signupForm.name.trim(),
         email: signupForm.email.trim(),
-        password: signupForm.password
+        password: signupForm.password,
+        role: signupForm.role
       });
       return response;
     } catch (error) {

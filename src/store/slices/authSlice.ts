@@ -9,7 +9,7 @@ interface AuthState {
   error: string | null;
   isAuthenticated: boolean;
   loginForm: { email: string; password: string };
-  signupForm: { name: string; email: string; password: string; confirmPassword: string };
+  signupForm: { name: string; email: string; password: string; confirmPassword: string; role: string };
   passwordVisibility: {
     login: { password: boolean };
     signup: { password: boolean; confirmPassword: boolean };
@@ -30,6 +30,7 @@ const initialState: AuthState = {
     email: '',
     password: '',
     confirmPassword: '',
+    role: 'member',
   },
   passwordVisibility: {
     login: {
@@ -158,6 +159,7 @@ const authSlice = createSlice({
         email: '',
         password: '',
         confirmPassword: '',
+        role: 'member',
       };
       state.passwordVisibility.signup.password = false;
       state.passwordVisibility.signup.confirmPassword = false;

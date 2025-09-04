@@ -7,6 +7,9 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock')
 );
 
+// Mock fetch globally
+global.fetch = jest.fn();
+
 describe('AuthService', () => {
   beforeEach(() => {
     // Clear all mocks before each test
@@ -29,16 +32,49 @@ describe('AuthService', () => {
     };
 
     it('should successfully login with valid credentials', async () => {
+      // Mock successful API response
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '1',
+            email: 'test@example.com',
+            name: 'Test User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            token: 'jwt_token_123',
+          },
+          message: 'Login successful',
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
       const result = await authService.login(mockCredentials);
 
       expect(result).toEqual({
-        user: mockUser,
-        token: expect.any(String),
+        user: {
+          id: '1',
+          name: 'Test User',
+          email: 'test@example.com',
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        },
+        token: 'jwt_token_123',
       });
-      expect(result.token).toMatch(/^mock_jwt_token_\d+$/);
     });
 
     it('should throw error for invalid credentials', async () => {
+      // Mock API error response
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        json: async () => ({
+          success: false,
+          message: 'Invalid credentials',
+        }),
+      });
+
       const invalidCredentials: LoginCredentials = {
         email: 'invalid@example.com',
         password: 'wrongpassword',
@@ -50,13 +86,23 @@ describe('AuthService', () => {
     });
 
     it('should throw error for empty credentials', async () => {
+      // Mock API error response for empty credentials
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        json: async () => ({
+          success: false,
+          message: 'Email and password are required',
+        }),
+      });
+
       const emptyCredentials: LoginCredentials = {
         email: '',
         password: '',
       };
 
       await expect(authService.login(emptyCredentials)).rejects.toThrow(
-        'Invalid credentials'
+        'Email and password are required'
       );
     });
   });
@@ -66,25 +112,75 @@ describe('AuthService', () => {
       name: 'New User',
       email: 'newuser@example.com',
       password: 'newpassword123',
+      role: 'member',
     };
 
     it('should successfully signup with valid credentials', async () => {
+      // Mock successful API response
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '123',
+            email: 'newuser@example.com',
+            name: 'New User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            token: 'jwt_token_123',
+          },
+          message: 'User registered successfully',
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
       const result = await authService.signup(mockCredentials);
 
       expect(result).toEqual({
         user: {
-          id: expect.any(String),
+          id: '123',
           name: 'New User',
           email: 'newuser@example.com',
           createdAt: expect.any(String),
           updatedAt: expect.any(String),
         },
-        token: expect.any(String),
+        token: 'jwt_token_123',
       });
-      expect(result.token).toMatch(/^mock_jwt_token_\d+$/);
     });
 
     it('should create user with different ID for each signup', async () => {
+      // Mock first API response
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '123',
+            email: 'newuser@example.com',
+            name: 'New User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            token: 'jwt_token_123',
+          },
+        }),
+      });
+
+      // Mock second API response
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '456',
+            email: 'another@example.com',
+            name: 'New User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            token: 'jwt_token_456',
+          },
+        }),
+      });
+
       const result1 = await authService.signup(mockCredentials);
       const result2 = await authService.signup({
         ...mockCredentials,
@@ -97,6 +193,22 @@ describe('AuthService', () => {
 
   describe('logout', () => {
     it('should successfully logout and clear storage', async () => {
+      // Mock successful login API response
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '1',
+            email: 'test@example.com',
+            name: 'Test User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            token: 'jwt_token_123',
+          },
+        }),
+      });
+
       // First login to set up user
       await authService.login({
         email: 'test@example.com',
@@ -121,6 +233,22 @@ describe('AuthService', () => {
 
   describe('getCurrentUser', () => {
     it('should return user when logged in', async () => {
+      // Mock successful login API response
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '1',
+            email: 'test@example.com',
+            name: 'Test User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            token: 'jwt_token_123',
+          },
+        }),
+      });
+
       // First login
       await authService.login({
         email: 'test@example.com',
@@ -156,6 +284,22 @@ describe('AuthService', () => {
 
   describe('validateToken', () => {
     it('should return true when valid token exists', async () => {
+      // Mock successful login API response
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '1',
+            email: 'test@example.com',
+            name: 'Test User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            token: 'jwt_token_123',
+          },
+        }),
+      });
+
       // First login to set up token
       await authService.login({
         email: 'test@example.com',
