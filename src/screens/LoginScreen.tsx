@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
 } from 'react-native';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { useNavigation } from '@react-navigation/native';
 import { AuthStackNavigationProp } from '../types/navigation';
 import { InputField } from '../components/InputField';

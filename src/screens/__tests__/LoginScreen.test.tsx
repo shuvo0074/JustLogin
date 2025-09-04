@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { LoginScreen } from '../LoginScreen';
-import { AuthProvider } from '../../contexts/AuthContext';
+import { Provider } from 'react-redux';
+import { store } from '../../store';
 import { authService } from '../../services/authService';
 
 // Mock the authService
@@ -20,11 +21,14 @@ jest.mock('@react-navigation/native', () => ({
   useNavigation: () => mockNavigation,
 }));
 
-// Mock the AuthContext to include clearError
-jest.mock('../../contexts/AuthContext', () => ({
-  ...jest.requireActual('../../contexts/AuthContext'),
+// Mock the useAuth hook to include clearError
+jest.mock('../../hooks/useAuth', () => ({
   useAuth: () => ({
-    ...jest.requireActual('../../contexts/AuthContext').useAuth(),
+    handleLogin: jest.fn(),
+    isLoading: false,
+    error: null,
+    loginForm: { email: '', password: '' },
+    updateLoginForm: jest.fn(),
     clearError: mockClearError,
   }),
 }));
@@ -48,9 +52,9 @@ describe('LoginScreen', () => {
 
   const renderLoginScreen = () => {
     return render(
-      <AuthProvider>
+      <Provider store={store}>
         <LoginScreen />
-      </AuthProvider>
+      </Provider>
     );
   };
 
@@ -260,9 +264,9 @@ describe('LoginScreen', () => {
 
       // Simulate error state by directly calling setError
       render(
-        <AuthProvider>
+        <Provider store={store}>
           <LoginScreen />
-        </AuthProvider>
+        </Provider>
       );
 
       // This would require accessing the context directly, but for now we'll test

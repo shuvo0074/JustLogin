@@ -1,5 +1,5 @@
-// Contexts
-export { AuthProvider, useAuth } from './contexts/AuthContext';
+// Hooks
+export { useAuth } from './hooks/useAuth';
 
 // Screen components
 export { LoginScreen } from './screens/LoginScreen';
@@ -19,9 +19,6 @@ export { AuthNavigator } from './navigation/AuthNavigator';
 
 // Services
 export { authService } from './services/authService';
-
-// ViewModels
-export { useAuthViewModel } from './viewmodels/authViewModel';
 
 // Types
 export type { User, LoginCredentials, SignupCredentials, AuthResponse, AuthState } from './types/auth';

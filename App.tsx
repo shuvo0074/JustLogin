@@ -8,7 +8,8 @@
 import React from 'react';
 import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { AuthProvider, useAuth } from './src/contexts/AuthContext';
+import { Provider } from 'react-redux';
+import { store } from './src/store';
 import { AuthNavigator } from './src/navigation/AuthNavigator';
 
 const AppContent: React.FC = () => {
@@ -26,9 +27,9 @@ const AppContent: React.FC = () => {
 
 function App() {
   return (
-    <AuthProvider>
+    <Provider store={store}>
       <AppContent />
-    </AuthProvider>
+    </Provider>
   );
 }
 

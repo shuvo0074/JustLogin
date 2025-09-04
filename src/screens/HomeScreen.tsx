@@ -4,7 +4,7 @@ import {
   StyleSheet,
   Alert,
 } from 'react-native';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/Button';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { UserInfoCard } from '../components/UserInfoCard';

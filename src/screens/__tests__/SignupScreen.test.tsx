@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, fireEvent, waitFor, act } from '@testing-library/react-native';
 import { SignupScreen } from '../SignupScreen';
-import { AuthProvider } from '../../contexts/AuthContext';
+import { Provider } from 'react-redux';
+import { store } from '../../store';
 import { authService } from '../../services/authService';
 
 // Mock the authService
@@ -20,11 +21,14 @@ jest.mock('@react-navigation/native', () => ({
   useNavigation: () => mockNavigation,
 }));
 
-// Mock the AuthContext to include clearError
-jest.mock('../../contexts/AuthContext', () => ({
-  ...jest.requireActual('../../contexts/AuthContext'),
+// Mock the useAuth hook to include clearError
+jest.mock('../../hooks/useAuth', () => ({
   useAuth: () => ({
-    ...jest.requireActual('../../contexts/AuthContext').useAuth(),
+    handleSignup: jest.fn(),
+    isLoading: false,
+    error: null,
+    signupForm: { name: '', email: '', password: '', confirmPassword: '' },
+    updateSignupForm: jest.fn(),
     clearError: mockClearError,
   }),
 }));
@@ -40,9 +44,9 @@ describe('SignupScreen', () => {
 
   const renderSignupScreen = () => {
     return render(
-      <AuthProvider>
+      <Provider store={store}>
         <SignupScreen />
-      </AuthProvider>
+      </Provider>
     );
   };
 

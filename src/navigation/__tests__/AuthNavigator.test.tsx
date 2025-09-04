@@ -24,7 +24,8 @@
 import React from 'react';
 import { render, waitFor } from '@testing-library/react-native';
 import { AuthNavigator } from '../AuthNavigator';
-import { AuthProvider } from '../../contexts/AuthContext';
+import { Provider } from 'react-redux';
+import { store } from '../../store';
 import { authService } from '../../services/authService';
 
 // Mock the authService to control authentication responses in tests
@@ -77,13 +78,13 @@ describe('AuthNavigator', () => {
 
   /**
    * Helper function to render AuthNavigator with proper context
-   * Wraps the component in AuthProvider for proper authentication context
+   * Wraps the component in Redux Provider for proper authentication state
    */
   const renderAuthNavigator = () => {
     return render(
-      <AuthProvider>
+      <Provider store={store}>
         <AuthNavigator />
-      </AuthProvider>
+      </Provider>
     );
   };
 
