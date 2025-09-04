@@ -14,11 +14,12 @@ const TabIcon: React.FC<{ name: string; focused: boolean }> = ({ name, focused }
   const getIcon = () => {
     switch (name) {
       case 'Home':
-        return focused ? '🏋️‍♂️' : '🏋️‍♀️';
+        return '🏠';
+      // return '🏋️‍♂️';
       case 'Profile':
-        return focused ? '💪' : '👤';
+        return '👤';
       case 'About':
-        return focused ? '🏆' : 'ℹ️';
+        return 'ℹ️';
       default:
         return '❓';
     }
@@ -55,7 +56,6 @@ export const BottomTabNavigator: React.FC = () => {
         component={HomeScreen}
         options={{
           title: t.homeTab,
-          tabBarTestID: 'tab-home',
         }}
       />
       <Tab.Screen
@@ -63,7 +63,6 @@ export const BottomTabNavigator: React.FC = () => {
         component={ProfileScreen}
         options={{
           title: t.profileTab,
-          tabBarTestID: 'tab-profile',
         }}
       />
       <Tab.Screen
@@ -71,7 +70,6 @@ export const BottomTabNavigator: React.FC = () => {
         component={AboutScreen}
         options={{
           title: t.aboutTab,
-          tabBarTestID: 'tab-about',
         }}
       />
     </Tab.Navigator>
@@ -83,13 +81,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#3c3c3c',
     borderTopColor: '#e96315',
     borderTopWidth: 1,
-    // height: 60,
-    // paddingBottom: 8,
-    paddingTop: 8,
+    height: 80,
+    paddingBottom: 12,
+    paddingTop: 12,
   },
   tabBarLabel: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
+    marginTop: 4,
   },
   header: {
     backgroundColor: '#3c3c3c',
@@ -103,8 +102,9 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 32,
   },
   icon: {
-    fontSize: 20,
+    fontSize: 28,
   },
 });
