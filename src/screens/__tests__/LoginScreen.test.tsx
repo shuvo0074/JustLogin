@@ -22,13 +22,18 @@ jest.mock('@react-navigation/native', () => ({
 }));
 
 // Mock the useAuth hook to include clearError
+let mockLoginForm = { email: '', password: '' };
+const mockUpdateLoginForm = jest.fn((field, value) => {
+  mockLoginForm = { ...mockLoginForm, [field]: value };
+});
+
 jest.mock('../../hooks/useAuth', () => ({
   useAuth: () => ({
     handleLogin: jest.fn(),
     isLoading: false,
     error: null,
-    loginForm: { email: '', password: '' },
-    updateLoginForm: jest.fn(),
+    loginForm: mockLoginForm,
+    updateLoginForm: mockUpdateLoginForm,
     clearError: mockClearError,
   }),
 }));
@@ -36,6 +41,7 @@ jest.mock('../../hooks/useAuth', () => ({
 describe('LoginScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockLoginForm = { email: '', password: '' };
     mockedAuthService.login.mockResolvedValue({
       user: { 
         id: '1', 
@@ -60,11 +66,11 @@ describe('LoginScreen', () => {
 
   describe('Initial render', () => {
     it('should render login form correctly', () => {
-      const { getByPlaceholderText, getByText } = renderLoginScreen();
+      const { getByPlaceholderText, getByText, getByTestId } = renderLoginScreen();
 
       expect(getByPlaceholderText('Email')).toBeTruthy();
       expect(getByPlaceholderText('Password')).toBeTruthy();
-      expect(getByText('Login')).toBeTruthy();
+      expect(getByTestId('screen-Login')).toBeTruthy();
       expect(getByText('Sign up')).toBeTruthy();
     });
 
@@ -83,7 +89,7 @@ describe('LoginScreen', () => {
 
       fireEvent.changeText(emailInput, 'test@example.com');
 
-      expect(emailInput.props.value).toBe('test@example.com');
+      expect(mockUpdateLoginForm).toHaveBeenCalledWith('email', 'test@example.com');
     });
 
     it('should update password field', () => {
@@ -92,7 +98,7 @@ describe('LoginScreen', () => {
 
       fireEvent.changeText(passwordInput, 'password123');
 
-      expect(passwordInput.props.value).toBe('password123');
+      expect(mockUpdateLoginForm).toHaveBeenCalledWith('password', 'password123');
     });
   });
 
@@ -160,8 +166,8 @@ describe('LoginScreen', () => {
 
   describe('Login functionality', () => {
     it('should not login with empty fields', async () => {
-      const { getByText } = renderLoginScreen();
-      const loginButton = getByText('Login');
+      const { getByTestId } = renderLoginScreen();
+      const loginButton = getByTestId('button-login');
 
       // Submit form without filling fields
       fireEvent.press(loginButton);
@@ -171,10 +177,10 @@ describe('LoginScreen', () => {
     });
 
     it('should not login with invalid email format', async () => {
-      const { getByPlaceholderText, getByText } = renderLoginScreen();
+      const { getByPlaceholderText, getByTestId } = renderLoginScreen();
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
-      const loginButton = getByText('Login');
+      const loginButton = getByTestId('button-login');
 
       // Fill in form with invalid email
       fireEvent.changeText(emailInput, 'invalid-email');
@@ -188,10 +194,10 @@ describe('LoginScreen', () => {
     });
 
     it('should not login with short password', async () => {
-      const { getByPlaceholderText, getByText } = renderLoginScreen();
+      const { getByPlaceholderText, getByTestId } = renderLoginScreen();
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
-      const loginButton = getByText('Login');
+      const loginButton = getByTestId('button-login');
 
       // Fill in form with short password
       fireEvent.changeText(emailInput, 'test@example.com');
@@ -241,10 +247,10 @@ describe('LoginScreen', () => {
         }), 100))
       );
 
-      const { getByPlaceholderText, getByText } = renderLoginScreen();
+      const { getByPlaceholderText, getByTestId } = renderLoginScreen();
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
-      const loginButton = getByText('Login');
+      const loginButton = getByTestId('button-login');
 
       // Fill in form
       fireEvent.changeText(emailInput, 'test@example.com');
@@ -263,7 +269,7 @@ describe('LoginScreen', () => {
       const { getByText } = renderLoginScreen();
 
       // Simulate error state by directly calling setError
-      render(
+      const { getByTestId } = render(
         <Provider store={store}>
           <LoginScreen />
         </Provider>
@@ -271,7 +277,7 @@ describe('LoginScreen', () => {
 
       // This would require accessing the context directly, but for now we'll test
       // that the error container exists
-      expect(getByText('Login')).toBeTruthy();
+      expect(getByTestId('screen-Login')).toBeTruthy();
     });
   });
 }); 

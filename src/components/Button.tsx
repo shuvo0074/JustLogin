@@ -52,6 +52,7 @@ export const Button: React.FC<ButtonProps> = ({
       style={buttonStyle}
       disabled={disabled || loading}
       activeOpacity={0.8}
+      testID={`button-${title.toLowerCase().replace(/\s+/g, '-')}`}
       {...props}
     >
       {loading ? (

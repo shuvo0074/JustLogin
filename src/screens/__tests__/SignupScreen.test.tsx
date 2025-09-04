@@ -22,13 +22,18 @@ jest.mock('@react-navigation/native', () => ({
 }));
 
 // Mock the useAuth hook to include clearError
+let mockSignupForm = { name: '', email: '', password: '', confirmPassword: '' };
+const mockUpdateSignupForm = jest.fn((field, value) => {
+  mockSignupForm = { ...mockSignupForm, [field]: value };
+});
+
 jest.mock('../../hooks/useAuth', () => ({
   useAuth: () => ({
     handleSignup: jest.fn(),
     isLoading: false,
     error: null,
-    signupForm: { name: '', email: '', password: '', confirmPassword: '' },
-    updateSignupForm: jest.fn(),
+    signupForm: mockSignupForm,
+    updateSignupForm: mockUpdateSignupForm,
     clearError: mockClearError,
   }),
 }));
@@ -36,6 +41,7 @@ jest.mock('../../hooks/useAuth', () => ({
 describe('SignupScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockSignupForm = { name: '', email: '', password: '', confirmPassword: '' };
     mockedAuthService.signup.mockResolvedValue({
       user: { id: '1', name: 'Test User', email: 'test@example.com', createdAt: '2023-01-01', updatedAt: '2023-01-01' },
       token: 'mock-token',
@@ -52,14 +58,14 @@ describe('SignupScreen', () => {
 
   describe('Initial render', () => {
     it('should render signup form correctly', () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByText, getByTestId } = renderSignupScreen();
 
       expect(getByPlaceholderText('Full Name')).toBeTruthy();
       expect(getByPlaceholderText('Email')).toBeTruthy();
       expect(getByPlaceholderText('Password')).toBeTruthy();
       expect(getByPlaceholderText('Confirm Password')).toBeTruthy();
-      expect(getByText('Create Account')).toBeTruthy();
-      expect(getByText('Login')).toBeTruthy();
+      expect(getByTestId('button-create-account')).toBeTruthy();
+      expect(getByTestId('button-login')).toBeTruthy();
     });
 
     it('should show password visibility toggles', () => {
@@ -78,7 +84,7 @@ describe('SignupScreen', () => {
 
       fireEvent.changeText(nameInput, 'John Doe');
 
-      expect(nameInput.props.value).toBe('John Doe');
+      expect(mockUpdateSignupForm).toHaveBeenCalledWith('name', 'John Doe');
     });
 
     it('should update email field', () => {
@@ -87,7 +93,7 @@ describe('SignupScreen', () => {
 
       fireEvent.changeText(emailInput, 'john@example.com');
 
-      expect(emailInput.props.value).toBe('john@example.com');
+      expect(mockUpdateSignupForm).toHaveBeenCalledWith('email', 'john@example.com');
     });
 
     it('should update password field', () => {
@@ -96,7 +102,7 @@ describe('SignupScreen', () => {
 
       fireEvent.changeText(passwordInput, 'password123');
 
-      expect(passwordInput.props.value).toBe('password123');
+      expect(mockUpdateSignupForm).toHaveBeenCalledWith('password', 'password123');
     });
 
     it('should update confirm password field', () => {
@@ -105,7 +111,7 @@ describe('SignupScreen', () => {
 
       fireEvent.changeText(confirmPasswordInput, 'password123');
 
-      expect(confirmPasswordInput.props.value).toBe('password123');
+      expect(mockUpdateSignupForm).toHaveBeenCalledWith('confirmPassword', 'password123');
     });
 
     it('should toggle password visibility for password field', () => {
@@ -148,7 +154,7 @@ describe('SignupScreen', () => {
 
   describe('Form validation', () => {
     it('should show error for empty name on blur', () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const nameInput = getByPlaceholderText('Full Name');
 
       fireEvent(nameInput, 'blur');
@@ -158,7 +164,7 @@ describe('SignupScreen', () => {
     });
 
     it('should show error for empty email on blur', () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const emailInput = getByPlaceholderText('Email');
 
       fireEvent(emailInput, 'blur');
@@ -168,7 +174,7 @@ describe('SignupScreen', () => {
     });
 
     it('should show error for invalid email format', () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const emailInput = getByPlaceholderText('Email');
 
       fireEvent.changeText(emailInput, 'invalid-email');
@@ -179,7 +185,7 @@ describe('SignupScreen', () => {
     });
 
     it('should show error for empty password on blur', () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const passwordInput = getByPlaceholderText('Password');
 
       fireEvent(passwordInput, 'blur');
@@ -189,7 +195,7 @@ describe('SignupScreen', () => {
     });
 
     it('should show error for short password', () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const passwordInput = getByPlaceholderText('Password');
 
       fireEvent.changeText(passwordInput, '123');
@@ -200,7 +206,7 @@ describe('SignupScreen', () => {
     });
 
     it('should show error for empty confirm password on blur', () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
 
       fireEvent(confirmPasswordInput, 'blur');
@@ -210,7 +216,7 @@ describe('SignupScreen', () => {
     });
 
     it('should show error for password mismatch', () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
 
@@ -252,12 +258,12 @@ describe('SignupScreen', () => {
 
   describe('Signup functionality', () => {
     it('should signup successfully with valid credentials', async () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const nameInput = getByPlaceholderText('Full Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
-      const signupButton = getByText('Create Account');
+      const signupButton = getByTestId('button-create-account');
 
       // Fill in form
       fireEvent.changeText(nameInput, 'John Doe');
@@ -276,12 +282,12 @@ describe('SignupScreen', () => {
       const errorMessage = 'User already exists';
       mockedAuthService.signup.mockRejectedValue(new Error(errorMessage));
 
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const nameInput = getByPlaceholderText('Full Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
-      const signupButton = getByText('Create Account');
+      const signupButton = getByTestId('button-create-account');
 
       // Fill in form
       fireEvent.changeText(nameInput, 'John Doe');
@@ -297,12 +303,12 @@ describe('SignupScreen', () => {
     });
 
     it('should not signup with invalid email format', async () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const nameInput = getByPlaceholderText('Full Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
-      const signupButton = getByText('Create Account');
+      const signupButton = getByTestId('button-create-account');
 
       // Fill in form with invalid email
       fireEvent.changeText(nameInput, 'John Doe');
@@ -318,12 +324,12 @@ describe('SignupScreen', () => {
     });
 
     it('should not signup with short password', async () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const nameInput = getByPlaceholderText('Full Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
-      const signupButton = getByText('Create Account');
+      const signupButton = getByTestId('button-create-account');
 
       // Fill in form with short password
       fireEvent.changeText(nameInput, 'John Doe');
@@ -339,12 +345,12 @@ describe('SignupScreen', () => {
     });
 
     it('should not signup with password mismatch', async () => {
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const nameInput = getByPlaceholderText('Full Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
-      const signupButton = getByText('Create Account');
+      const signupButton = getByTestId('button-create-account');
 
       // Fill in form with mismatched passwords
       fireEvent.changeText(nameInput, 'John Doe');
@@ -360,8 +366,8 @@ describe('SignupScreen', () => {
     });
 
     it('should not signup with empty fields', async () => {
-      const { getByText } = renderSignupScreen();
-      const signupButton = getByText('Create Account');
+      const { getByTestId } = renderSignupScreen();
+      const signupButton = getByTestId('button-create-account');
 
       // Submit form without filling fields
       fireEvent.press(signupButton);
@@ -401,12 +407,12 @@ describe('SignupScreen', () => {
         }), 100))
       );
 
-      const { getByPlaceholderText, getByText } = renderSignupScreen();
+      const { getByPlaceholderText, getByTestId } = renderSignupScreen();
       const nameInput = getByPlaceholderText('Full Name');
       const emailInput = getByPlaceholderText('Email');
       const passwordInput = getByPlaceholderText('Password');
       const confirmPasswordInput = getByPlaceholderText('Confirm Password');
-      const signupButton = getByText('Create Account');
+      const signupButton = getByTestId('button-create-account');
 
       // Fill in form
       fireEvent.changeText(nameInput, 'John Doe');
