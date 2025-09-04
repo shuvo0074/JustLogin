@@ -120,7 +120,7 @@ export const SignupScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#3c3c3c',
   },
   scrollContent: {
     flexGrow: 1,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 30,
-    color: '#333',
+    color: '#ffffff',
   },
   errorContainer: {
     backgroundColor: '#ffebee',
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   secondaryButtonText: {
-    color: '#666',
+    color: '#ffffff',
     fontSize: 16,
   },
   loginLink: {

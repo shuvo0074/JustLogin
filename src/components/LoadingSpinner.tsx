@@ -19,7 +19,7 @@ interface LoadingSpinnerProps {
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   message = 'Loading...',
   size = 'large',
-  color = '#007AFF',
+  color = '#e96315',
   containerStyle,
   textStyle,
 }) => {
@@ -36,11 +36,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#3c3c3c',
   },
   text: {
     marginTop: 10,
     fontSize: 16,
-    color: '#666',
+    color: '#ffffff',
   },
 }); 

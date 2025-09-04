@@ -70,10 +70,12 @@ export const UserInfoCard: React.FC<UserInfoCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
     padding: 20,
     borderRadius: 12,
     marginBottom: 30,
+    borderWidth: 1,
+    borderColor: '#e96315',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -86,12 +88,12 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#666',
+    color: '#333333',
     marginBottom: 5,
   },
   value: {
     fontSize: 18,
-    color: '#333',
+    color: '#333333',
     marginBottom: 15,
   },
 }); 

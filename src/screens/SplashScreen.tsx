@@ -5,7 +5,6 @@ import {
     StyleSheet,
     ActivityIndicator,
     StatusBar,
-    useColorScheme,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -17,7 +16,6 @@ type SplashScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Splas
 const SplashScreen: React.FC = () => {
     const navigation = useNavigation<SplashScreenNavigationProp>();
     const { checkAuthStatus, isAuthenticated, isLoading } = useAuth();
-    const isDarkMode = useColorScheme() === 'dark';
 
     useEffect(() => {
         const initializeApp = async () => {
@@ -52,25 +50,25 @@ const SplashScreen: React.FC = () => {
     }, [isAuthenticated, isLoading, navigation]);
 
     return (
-        <View style={[styles.container, { backgroundColor: isDarkMode ? '#000' : '#fff' }]}>
-            <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <View style={styles.container}>
+            <StatusBar barStyle="light-content" />
 
             <View style={styles.content}>
-                <Text style={[styles.title, { color: isDarkMode ? '#fff' : '#000' }]}>
+                <Text style={styles.title}>
                     NSF GYM
                 </Text>
 
-                <Text style={[styles.subtitle, { color: isDarkMode ? '#ccc' : '#666' }]}>
+                <Text style={styles.subtitle}>
                     NEVER STOP FIGHTING
                 </Text>
 
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator
                         size="large"
-                        color={isDarkMode ? '#007AFF' : '#007AFF'}
+                        color="#e96315"
                         testID="activity-indicator"
                     />
-                    <Text style={[styles.loadingText, { color: isDarkMode ? '#ccc' : '#666' }]}>
+                    <Text style={styles.loadingText}>
                         Loading...
                     </Text>
                 </View>
@@ -84,6 +82,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#3c3c3c',
     },
     content: {
         alignItems: 'center',
@@ -94,12 +93,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 8,
         textAlign: 'center',
+        color: '#ffffff',
     },
     subtitle: {
         fontSize: 16,
         marginBottom: 40,
         textAlign: 'center',
         lineHeight: 22,
+        color: '#ffffff',
     },
     loadingContainer: {
         alignItems: 'center',
@@ -107,6 +108,7 @@ const styles = StyleSheet.create({
     loadingText: {
         marginTop: 16,
         fontSize: 14,
+        color: '#ffffff',
     },
 });
 

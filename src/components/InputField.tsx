@@ -70,20 +70,20 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    color: '#ffffff',
     marginBottom: 8,
   },
   inputContainer: {
     position: 'relative',
   },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#e96315',
     fontSize: 16,
-    color: '#333',
+    color: '#333333',
   },
   inputError: {
     borderColor: '#f44336',

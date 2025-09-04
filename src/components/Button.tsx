@@ -57,7 +57,7 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {loading ? (
         <ActivityIndicator
-          color={variant === 'primary' ? '#fff' : '#007AFF'}
+          color={variant === 'primary' ? '#ffffff' : '#e96315'}
           size="small"
         />
       ) : (
@@ -76,12 +76,12 @@ const styles = StyleSheet.create({
   },
   // Variants
   primary: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#e96315',
   },
   secondary: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: '#007AFF',
+    borderColor: '#e96315',
   },
   danger: {
     backgroundColor: '#FF3B30',
@@ -104,15 +104,15 @@ const styles = StyleSheet.create({
   },
   // Text styles for variants
   primaryText: {
-    color: '#fff',
+    color: '#ffffff',
     fontWeight: 'bold',
   },
   secondaryText: {
-    color: '#007AFF',
+    color: '#e96315',
     fontWeight: 'bold',
   },
   dangerText: {
-    color: '#fff',
+    color: '#ffffff',
     fontWeight: 'bold',
   },
   // Text styles for sizes
