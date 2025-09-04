@@ -21,6 +21,13 @@ jest.mock('@react-navigation/stack', () => ({
   }),
 }));
 
+jest.mock('@react-navigation/bottom-tabs', () => ({
+  createBottomTabNavigator: () => ({
+    Navigator: ({ children }) => children,
+    Screen: ({ children }) => children,
+  }),
+}));
+
 // Mock React Native components and modules
 jest.mock('react-native', () => ({
   Alert: {

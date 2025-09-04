@@ -44,12 +44,12 @@ export const LoginScreen: React.FC = () => {
     updateLoginForm(field, value);
   };
 
-  // Navigate to home screen when authentication is successful
+  // Navigate to main tabs when authentication is successful
   useEffect(() => {
     if (isAuthenticated && !isLoading) {
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Home' }],
+        routes: [{ name: 'MainTabs' }],
       });
     }
   }, [isAuthenticated, isLoading, navigation]);

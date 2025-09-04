@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import SplashScreen from '../screens/SplashScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { SignupScreen } from '../screens/SignupScreen';
-import { HomeScreen } from '../screens/HomeScreen';
+import { BottomTabNavigator } from './BottomTabNavigator';
 import { RootStackParamList } from '../types/navigation';
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -33,8 +33,8 @@ export const AuthNavigator: React.FC = () => {
           component={SignupScreen}
         />
         <Stack.Screen
-          name="Home"
-          component={HomeScreen}
+          name="MainTabs"
+          component={BottomTabNavigator}
         />
       </Stack.Navigator>
     </View>
