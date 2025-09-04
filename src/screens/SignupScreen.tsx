@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -22,7 +22,8 @@ export const SignupScreen: React.FC = () => {
     error,
     signupForm,
     updateSignupForm,
-    clearError
+    clearError,
+    isAuthenticated,
   } = useAuth();
 
   const onSignupPress = useCallback(async () => {
@@ -42,6 +43,16 @@ export const SignupScreen: React.FC = () => {
   const handleFieldChange = (field: 'name' | 'email' | 'password' | 'confirmPassword', value: string) => {
     updateSignupForm(field, value);
   };
+
+  // Navigate to home screen when authentication is successful
+  useEffect(() => {
+    if (isAuthenticated && !isLoading) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      });
+    }
+  }, [isAuthenticated, isLoading, navigation]);
 
   return (
     <KeyboardAvoidingView 
