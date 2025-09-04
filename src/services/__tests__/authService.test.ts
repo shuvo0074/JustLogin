@@ -32,7 +32,7 @@ describe('AuthService', () => {
     };
 
     it('should successfully login with valid credentials', async () => {
-      // Mock successful API response
+      // Mock successful login API response
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
@@ -47,6 +47,21 @@ describe('AuthService', () => {
           },
           message: 'Login successful',
           timestamp: new Date().toISOString(),
+        }),
+      });
+
+      // Mock successful profile API response for sync
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '1',
+            email: 'test@example.com',
+            name: 'Test User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
         }),
       });
 
@@ -209,6 +224,21 @@ describe('AuthService', () => {
         }),
       });
 
+      // Mock successful profile API response for sync
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '1',
+            email: 'test@example.com',
+            name: 'Test User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        }),
+      });
+
       // First login to set up user
       await authService.login({
         email: 'test@example.com',
@@ -249,6 +279,36 @@ describe('AuthService', () => {
         }),
       });
 
+      // Mock successful profile API response for login sync
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '1',
+            email: 'test@example.com',
+            name: 'Test User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        }),
+      });
+
+      // Mock successful profile API response for getCurrentUser
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '1',
+            email: 'test@example.com',
+            name: 'Test User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          },
+        }),
+      });
+
       // First login
       await authService.login({
         email: 'test@example.com',
@@ -276,6 +336,16 @@ describe('AuthService', () => {
       // Set invalid token
       await AsyncStorage.setItem('auth_token', 'invalid-token');
 
+      // Mock profile API error response
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        json: async () => ({
+          success: false,
+          message: 'Unauthorized',
+        }),
+      });
+
       const user = await authService.getCurrentUser();
 
       expect(user).toBeNull();
@@ -296,6 +366,21 @@ describe('AuthService', () => {
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
             token: 'jwt_token_123',
+          },
+        }),
+      });
+
+      // Mock successful profile API response for sync
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          success: true,
+          data: {
+            id: '1',
+            email: 'test@example.com',
+            name: 'Test User',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
           },
         }),
       });

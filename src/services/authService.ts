@@ -140,24 +140,67 @@ class AuthService {
 
       const data = await response.json();
 
-      // Extract user data and token from API response
-      const user: User = {
-        id: data.data.id || data.data.user_id || Date.now().toString(),
-        email: data.data.email || credentials.email,
-        name: data.data.name || 'User',
-        createdAt: data.data.created_at || new Date().toISOString(),
-        updatedAt: data.data.updated_at || new Date().toISOString(),
-      };
-
+      // Extract token from login response
       const token = data.data.token || data.token || `jwt_token_${Date.now()}`;
+
+      // Store token first
+      await this.storeToken(token);
+
+      // Sync user data from profile API
+      let user: User;
+      try {
+        console.log('Syncing user data from profile API after login...');
+        const profileResponse = await fetch(`${this.baseUrl}/users/profile`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        console.log('Profile sync response:', profileResponse);
+
+        if (profileResponse.ok) {
+          const profileData = await profileResponse.json();
+          console.log('Profile sync data:', profileData);
+
+          // Extract user data from profile API response
+          user = {
+            id: profileData.data.id || profileData.data.user_id || Date.now().toString(),
+            email: profileData.data.email || credentials.email,
+            name: profileData.data.name || 'User',
+            createdAt: profileData.data.created_at || new Date().toISOString(),
+            updatedAt: profileData.data.updated_at || new Date().toISOString(),
+          };
+        } else {
+          console.warn('Profile sync failed, using login response data');
+          // Fallback to login response data if profile sync fails
+          user = {
+            id: data.data.id || data.data.user_id || Date.now().toString(),
+            email: data.data.email || credentials.email,
+            name: data.data.name || 'User',
+            createdAt: data.data.created_at || new Date().toISOString(),
+            updatedAt: data.data.updated_at || new Date().toISOString(),
+          };
+        }
+      } catch (profileError) {
+        console.warn('Profile sync error, using login response data:', profileError);
+        // Fallback to login response data if profile sync fails
+        user = {
+          id: data.data.id || data.data.user_id || Date.now().toString(),
+          email: data.data.email || credentials.email,
+          name: data.data.name || 'User',
+          createdAt: data.data.created_at || new Date().toISOString(),
+          updatedAt: data.data.updated_at || new Date().toISOString(),
+        };
+      }
 
       const authResponse: AuthResponse = {
         user,
         token,
       };
 
-      // Store authentication data
-      await this.storeToken(token);
+      // Store user data
       await this.storeUser(user);
 
       return authResponse;
@@ -208,17 +251,55 @@ class AuthService {
   async getCurrentUser(): Promise<User | null> {
     try {
       const token = await this.getStoredToken();
-      const user = await this.getStoredUser();
 
-      if (token && user) {
-        // In a real app, you might want to validate the token with the server
-        return user;
+      if (!token) {
+        return null;
       }
 
-      return null;
+      // Fetch user profile from API
+      const response = await fetch(`${this.baseUrl}/users/profile`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      console.log('Profile API response:', response);
+
+      if (!response.ok) {
+        console.error('Profile API error:', response.status, response.statusText);
+        // If API fails, fall back to stored user data
+        const storedUser = await this.getStoredUser();
+        return storedUser;
+      }
+
+      const data = await response.json();
+      console.log('Profile API data:', data);
+
+      // Extract user data from API response
+      const user: User = {
+        id: data.data.id || data.data.user_id || Date.now().toString(),
+        email: data.data.email || '',
+        name: data.data.name || 'User',
+        createdAt: data.data.created_at || new Date().toISOString(),
+        updatedAt: data.data.updated_at || new Date().toISOString(),
+      };
+
+      // Update stored user data with fresh data from API
+      await this.storeUser(user);
+
+      return user;
     } catch (error) {
       console.error('Get current user error:', error);
-      return null;
+      // If API fails, fall back to stored user data
+      try {
+        const storedUser = await this.getStoredUser();
+        return storedUser;
+      } catch (fallbackError) {
+        console.error('Fallback to stored user failed:', fallbackError);
+        return null;
+      }
     }
   }
 

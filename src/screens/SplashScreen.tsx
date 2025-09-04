@@ -36,12 +36,12 @@ const SplashScreen: React.FC = () => {
         // Navigate based on authentication status once loading is complete
         if (!isLoading) {
             setTimeout(_ => {
-                            if (isAuthenticated) {
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'MainTabs' }],
-                });
-            } else {
+                if (isAuthenticated) {
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: 'MainTabs' }],
+                    });
+                } else {
                     navigation.reset({
                         index: 0,
                         routes: [{ name: 'Login' }],
