@@ -332,8 +332,8 @@ describe('AuthService', () => {
       expect(user).toBeNull();
     });
 
-    it('should return null when token is invalid', async () => {
-      // Set invalid token
+    it('should handle 401 error gracefully', async () => {
+      // Set invalid token first
       await AsyncStorage.setItem('auth_token', 'invalid-token');
 
       // Mock profile API error response
@@ -346,9 +346,9 @@ describe('AuthService', () => {
         }),
       });
 
-      const user = await authService.getCurrentUser();
-
-      expect(user).toBeNull();
+      // For now, just test that it doesn't crash
+      const result = await authService.getCurrentUser();
+      expect(result).toBeNull();
     });
   });
 

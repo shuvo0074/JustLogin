@@ -120,9 +120,19 @@ export const logout = createAsyncThunk(
 
 export const checkAuthStatus = createAsyncThunk(
   'auth/checkAuthStatus',
-  async (): Promise<User | null> => {
-    const user = await authService.getCurrentUser();
-    return user;
+  async (_, { dispatch }): Promise<User | null> => {
+    try {
+      const user = await authService.getCurrentUser();
+      return user;
+    } catch (error) {
+      // If UNAUTHORIZED error, dispatch logout to clear state
+      if (error instanceof Error && error.message === 'UNAUTHORIZED') {
+        console.log('User unauthorized, logging out');
+        dispatch(logout());
+        return null;
+      }
+      throw error;
+    }
   }
 );
 

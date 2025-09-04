@@ -269,7 +269,15 @@ class AuthService {
 
       if (!response.ok) {
         console.error('Profile API error:', response.status, response.statusText);
-        // If API fails, fall back to stored user data
+        
+        // If 401 Unauthorized, clear stored data and throw error for logout
+        if (response.status === 401) {
+          console.log('Profile API returned 401, clearing stored data and logging out user');
+          await this.clearStoredData();
+          throw new Error('UNAUTHORIZED');
+        }
+        
+        // For other errors, fall back to stored user data
         const storedUser = await this.getStoredUser();
         return storedUser;
       }
