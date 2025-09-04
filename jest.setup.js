@@ -28,6 +28,28 @@ jest.mock('@react-navigation/bottom-tabs', () => ({
   }),
 }));
 
+// Mock react-native-safe-area-context
+jest.mock('react-native-safe-area-context', () => ({
+  SafeAreaProvider: ({ children }) => children,
+  SafeAreaView: ({ children, style, testID }) => {
+    const React = require('react');
+    const { View } = require('react-native');
+    return React.createElement(View, { style, testID }, children);
+  },
+  useSafeAreaInsets: () => ({
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  }),
+  useSafeAreaFrame: () => ({
+    x: 0,
+    y: 0,
+    width: 375,
+    height: 812,
+  }),
+}));
+
 // Mock React Native components and modules
 jest.mock('react-native', () => ({
   Alert: {

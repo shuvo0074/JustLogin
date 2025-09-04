@@ -8,6 +8,7 @@
 import React from 'react';
 import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import { store } from './src/store';
 import { AuthNavigator } from './src/navigation/AuthNavigator';
@@ -28,11 +29,13 @@ const AppContent: React.FC = () => {
 
 function App() {
   return (
-    <Provider store={store}>
-      <LanguageProvider>
-        <AppContent />
-      </LanguageProvider>
-    </Provider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <LanguageProvider>
+          <AppContent />
+        </LanguageProvider>
+      </Provider>
+    </SafeAreaProvider>
   );
 }
 

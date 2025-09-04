@@ -3,6 +3,7 @@ import {
   View,
   StyleSheet,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -18,20 +19,24 @@ export const HomeScreen: React.FC = () => {
   }
 
   return (
-    <View style={styles.container} testID="screen-Home">
-      <PageTitle title={t.welcome} />
+    <SafeAreaView style={styles.container} testID="screen-Home">
+      <View style={styles.content}>
+        <PageTitle title={t.welcome} />
 
-      <UserInfoCard user={user} />
-
-    </View>
+        <UserInfoCard user={user} />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#3c3c3c',
+  },
+  content: {
+    flex: 1,
     justifyContent: 'center',
     padding: 20,
-    backgroundColor: '#3c3c3c',
   },
 }); 

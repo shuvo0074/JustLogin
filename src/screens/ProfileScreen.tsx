@@ -6,6 +6,7 @@ import {
   Alert,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../hooks/useAuth';
 import { Button } from '../components/Button';
 import { LoadingSpinner } from '../components/LoadingSpinner';
@@ -55,42 +56,44 @@ export const ProfileScreen: React.FC = () => {
   }
 
   return (
-    <ScrollView style={styles.container} testID="screen-Profile">
-      <PageTitle title={t.profileTitle} variant="large" />
+    <SafeAreaView style={styles.container} testID="screen-Profile">
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+        <PageTitle title={t.profileTitle} variant="large" />
 
-      <UserInfoCard user={user} showId={true} showTimestamps={true} />
+        <UserInfoCard user={user} showId={true} showTimestamps={true} />
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.accountSettings}</Text>
-        <Text style={styles.sectionDescription}>
-          {t.accountSettingsDescription}
-        </Text>
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t.accountSettings}</Text>
+          <Text style={styles.sectionDescription}>
+            {t.accountSettingsDescription}
+          </Text>
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.privacySecurity}</Text>
-        <Text style={styles.sectionDescription}>
-          {t.privacySecurityDescription}
-        </Text>
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t.privacySecurity}</Text>
+          <Text style={styles.sectionDescription}>
+            {t.privacySecurityDescription}
+          </Text>
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>{t.language}</Text>
-        <Text style={styles.sectionDescription}>
-          {t.languageDescription}
-        </Text>
-        <LanguagePicker style={styles.languagePicker} />
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>{t.language}</Text>
+          <Text style={styles.sectionDescription}>
+            {t.languageDescription}
+          </Text>
+          <LanguagePicker style={styles.languagePicker} />
+        </View>
 
-      <Button
-        title={t.logout}
-        variant="danger"
-        onPress={handleLogout}
-        loading={isLoading}
-        disabled={isLoading}
-        style={styles.logoutButton}
-      />
-    </ScrollView>
+        <Button
+          title={t.logout}
+          variant="danger"
+          onPress={handleLogout}
+          loading={isLoading}
+          disabled={isLoading}
+          style={styles.logoutButton}
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -98,6 +101,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#3c3c3c',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
     padding: 20,
   },
   section: {
