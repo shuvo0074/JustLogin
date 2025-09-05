@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE_URL } from '../config/env';
 import { LoginCredentials, SignupCredentials, AuthResponse, User } from '../types/auth';
 
 // API service with real API calls
 class AuthService {
-  private baseUrl = 'http://localhost:3000';
+  private baseUrl = API_BASE_URL;
   // private baseUrl = 'https://new-jnssk5hb0-avishek-barmans-projects.vercel.app';
   private tokenKey = 'auth_token';
   private userKey = 'user_data';
@@ -11,6 +12,15 @@ class AuthService {
   // Simulate API delay
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  constructor() {
+    // Log the runtime API base URL so we can verify what the app will talk to
+    try {
+      console.log('[AuthService] runtime API_BASE_URL =', this.baseUrl);
+    } catch (e) {
+      // swallow any logging errors to avoid crashing startup
+    }
   }
 
   // Store token in AsyncStorage
@@ -67,7 +77,10 @@ class AuthService {
   // Register user with real API call
   async register(credentials: SignupCredentials): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/auth/register`, {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+      const response = await fetch(`${this.baseUrl}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -78,8 +91,10 @@ class AuthService {
           name: credentials.name,
           role: credentials.role,
         }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
       console.log(response, "=--==--=");
 
 
@@ -113,14 +128,29 @@ class AuthService {
       return authResponse;
     } catch (error) {
       console.error('Registration error:', error);
-      throw new Error(error instanceof Error ? error.message : 'Registration failed');
+
+      // Handle different types of errors
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new Error('Request timed out. Please check your internet connection.');
+        }
+        if (error.message.includes('fetch')) {
+          throw new Error('Unable to connect to server. Please check your network connection.');
+        }
+        throw new Error(error.message);
+      }
+
+      throw new Error('Registration failed. Please try again.');
     }
   }
 
   // Login user with real API call
   async loginUser(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/auth/login`, {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+      const response = await fetch(`${this.baseUrl}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -129,8 +159,10 @@ class AuthService {
           email: credentials.email,
           password: credentials.password,
         }),
+        signal: controller.signal,
       });
 
+      clearTimeout(timeoutId);
       console.log(response, "Login response");
 
       if (!response.ok) {
@@ -146,54 +178,16 @@ class AuthService {
       // Store token first
       await this.storeToken(token);
 
-      // Sync user data from profile API
-      let user: User;
-      try {
-        console.log('Syncing user data from profile API after login...');
-        const profileResponse = await fetch(`${this.baseUrl}/users/profile`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+      // Extract user data directly from login response
+      const user: User = {
+        id: data.data.user?.id || data.data.id || Date.now().toString(),
+        email: data.data.user?.email || data.data.email || credentials.email,
+        name: data.data.user?.name || data.data.name || 'User',
+        createdAt: data.data.user?.created_at || data.data.created_at || new Date().toISOString(),
+        updatedAt: data.data.user?.updated_at || data.data.updated_at || new Date().toISOString(),
+      };
 
-        console.log('Profile sync response:', profileResponse);
-
-        if (profileResponse.ok) {
-          const profileData = await profileResponse.json();
-          console.log('Profile sync data:', profileData);
-
-          // Extract user data from profile API response
-          user = {
-            id: profileData.data.id || profileData.data.user_id || Date.now().toString(),
-            email: profileData.data.email || credentials.email,
-            name: profileData.data.name || 'User',
-            createdAt: profileData.data.created_at || new Date().toISOString(),
-            updatedAt: profileData.data.updated_at || new Date().toISOString(),
-          };
-        } else {
-          console.warn('Profile sync failed, using login response data');
-          // Fallback to login response data if profile sync fails
-          user = {
-            id: data.data.id || data.data.user_id || Date.now().toString(),
-            email: data.data.email || credentials.email,
-            name: data.data.name || 'User',
-            createdAt: data.data.created_at || new Date().toISOString(),
-            updatedAt: data.data.updated_at || new Date().toISOString(),
-          };
-        }
-      } catch (profileError) {
-        console.warn('Profile sync error, using login response data:', profileError);
-        // Fallback to login response data if profile sync fails
-        user = {
-          id: data.data.id || data.data.user_id || Date.now().toString(),
-          email: data.data.email || credentials.email,
-          name: data.data.name || 'User',
-          createdAt: data.data.created_at || new Date().toISOString(),
-          updatedAt: data.data.updated_at || new Date().toISOString(),
-        };
-      }
+      console.log('User data from login response:', user);
 
       const authResponse: AuthResponse = {
         user,
@@ -206,7 +200,19 @@ class AuthService {
       return authResponse;
     } catch (error) {
       console.error('Login error:', error);
-      throw new Error(error instanceof Error ? error.message : 'Login failed');
+
+      // Handle different types of errors
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new Error('Request timed out. Please check your internet connection.');
+        }
+        if (error.message.includes('fetch')) {
+          throw new Error('Unable to connect to server. Please check your network connection.');
+        }
+        throw new Error(error.message);
+      }
+
+      throw new Error('Login failed. Please try again.');
     }
   }
 
@@ -256,48 +262,10 @@ class AuthService {
         return null;
       }
 
-      // Fetch user profile from API
-      const response = await fetch(`${this.baseUrl}/users/profile`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      console.log('Profile API response:', response);
-
-      if (!response.ok) {
-        console.error('Profile API error:', response.status, response.statusText);
-        
-        // If 401 Unauthorized, clear stored data and throw error for logout
-        if (response.status === 401) {
-          console.log('Profile API returned 401, clearing stored data and logging out user');
-          await this.clearStoredData();
-          throw new Error('UNAUTHORIZED');
-        }
-        
-        // For other errors, fall back to stored user data
-        const storedUser = await this.getStoredUser();
-        return storedUser;
-      }
-
-      const data = await response.json();
-      console.log('Profile API data:', data);
-
-      // Extract user data from API response
-      const user: User = {
-        id: data.data.id || data.data.user_id || Date.now().toString(),
-        email: data.data.email || '',
-        name: data.data.name || 'User',
-        createdAt: data.data.created_at || new Date().toISOString(),
-        updatedAt: data.data.updated_at || new Date().toISOString(),
-      };
-
-      // Update stored user data with fresh data from API
-      await this.storeUser(user);
-
-      return user;
+      // Return stored user data since profile API is not available
+      const storedUser = await this.getStoredUser();
+      console.log('Returning stored user data:', storedUser);
+      return storedUser;
     } catch (error) {
       console.error('Get current user error:', error);
       // If API fails, fall back to stored user data
