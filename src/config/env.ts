@@ -15,7 +15,7 @@ const getBackendIP = (): string => {
 
 const config = {
   development: {
-    API_BASE_URL: `http://${getBackendIP()}:8080`,
+    API_BASE_URL: `http://${getBackendIP()}:8080/api`,
     API_KEY: 'dev_api_key_123',
     AUTH_SECRET: 'dev_auth_secret_456',
     DEBUG: true,
@@ -26,8 +26,8 @@ const config = {
     // REACT_NATIVE_BACKEND_IP (e.g. REACT_NATIVE_BACKEND_IP=10.144.43.24)
     // When provided, we assume an HTTP backend on port 8080 for local testing.
     API_BASE_URL: process.env.REACT_NATIVE_BACKEND_IP
-      ? `http://${process.env.REACT_NATIVE_BACKEND_IP}:8080`
-      : 'https://api.gymapp.com',
+      ? `http://${process.env.REACT_NATIVE_BACKEND_IP}:8080/api`
+      : 'https://api.gymapp.com/api',
     API_KEY: 'prod_api_key_789',
     AUTH_SECRET: 'prod_auth_secret_101',
     DEBUG: false,
