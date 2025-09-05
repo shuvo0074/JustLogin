@@ -5,6 +5,8 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
+  Image,
+  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../hooks/useAuth';
@@ -55,10 +57,35 @@ export const ProfileScreen: React.FC = () => {
     return <LoadingSpinner message={t.loading} />;
   }
 
+  const screenWidth = Dimensions.get('window').width;
+  const profilePictureRadius = screenWidth / 2;
+
   return (
     <SafeAreaView style={styles.container} testID="screen-Profile">
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        <PageTitle title={t.profileTitle} variant="large" />
+        {/* Cover Photo */}
+        <View style={styles.coverPhotoContainer}>
+          <Image
+            source={{ uri: 'https://nsfgym.de/wp-content/uploads/2021/03/Slid-show.png' }}
+            style={styles.coverPhoto}
+            resizeMode="cover"
+          />
+        </View>
+
+        {/* Profile Picture */}
+        <View style={[styles.profilePictureContainer, { top: -profilePictureRadius / 2 }]}>
+          <Image
+            source={{ uri: 'https://nsfgym.de/wp-content/uploads/2021/03/Slid-show.png' }}
+            style={[styles.profilePicture, { 
+              width: profilePictureRadius, 
+              height: profilePictureRadius,
+              borderRadius: profilePictureRadius / 2 
+            }]}
+            resizeMode="cover"
+          />
+        </View>
+
+        <PageTitle title={user?.name.toString() || ''} variant="large" style={styles.profileTitle} />
 
         <UserInfoCard user={user} showId={true} showTimestamps={true} />
 
@@ -107,6 +134,41 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 20,
+  },
+  coverPhotoContainer: {
+    position: 'relative',
+    marginBottom: 0,
+  },
+  coverPhoto: {
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+  },
+  profilePictureContainer: {
+    position: 'relative',
+    alignSelf: 'center',
+    marginBottom: -50, // Negative margin to reduce space
+    zIndex: 1,
+  },
+  profilePicture: {
+    borderWidth: 4,
+    borderColor: '#ffffff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  profileTitle: {
+    textAlign: 'center',
+    marginTop: 0,
+    color: '#e96315',
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   section: {
     marginBottom: 30,
