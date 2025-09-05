@@ -14,6 +14,9 @@
         storage-clean storage-info storage-optimize \
         git-clean git-status \
         reset reset-hard \
+        detect-ip set-backend-ip auto-set-ip reset-backend-ip show-backend-config \
+        build-release install-release run-release fix-localhost-errors \
+        debug-device debug-metro debug-network debug-logs debug-reload debug-all \
         help
 
 # Default target
@@ -93,6 +96,14 @@ help: ## Show this help message
 	@echo "  auto-set-ip          Auto-detect and set laptop's IP"
 	@echo "  reset-backend-ip     Reset backend IP to localhost"
 	@echo "  show-backend-config  Show current backend configuration"
+	@echo ""
+	@echo "Debugging:"
+	@echo "  debug-device         Check device connection and app status"
+	@echo "  debug-metro          Check Metro server status"
+	@echo "  debug-network        Test network connectivity from device"
+	@echo "  debug-logs           Show recent React Native logs"
+	@echo "  debug-reload         Reload the React Native app"
+	@echo "  debug-all            Run all debug checks"
 	@echo ""
 
 # Cache Cleaning Tasks
@@ -513,3 +524,42 @@ run-release: build-release install-release ## Build, install and run release ver
 
 fix-localhost-errors: run-release ## Alias for run-release (fixes localhost:8081 Metro connection errors)
 	@echo "$(GREEN)✅ localhost:8081 errors should now be fixed!$(NC)"
+
+# ============================================================================
+# DEBUGGING COMMANDS
+# ============================================================================
+
+debug-device: ## Check device connection and status
+	@echo "$(BLUE)📱 Checking device connection...$(NC)"
+	adb devices
+	@echo ""
+	@echo "$(BLUE)📋 Checking app status...$(NC)"
+	adb shell dumpsys activity activities | grep -A 2 -B 2 contextlogin | head -10
+
+debug-metro: ## Check Metro server status
+	@echo "$(BLUE)🚀 Checking Metro server...$(NC)"
+	@if pgrep -f "react-native start" > /dev/null; then \
+		echo "$(GREEN)✅ Metro is running$(NC)"; \
+	else \
+		echo "$(RED)❌ Metro is not running$(NC)"; \
+	fi
+	@echo ""
+	@echo "$(BLUE)📊 Metro process details:$(NC)"
+	pgrep -f "react-native start" -l || echo "No Metro process found"
+
+debug-network: ## Test network connectivity from device to laptop
+	@echo "$(BLUE)🌐 Testing network connectivity...$(NC)"
+	@echo "Testing ping from device to laptop:"
+	adb shell ping -c 2 $$(grep REACT_NATIVE_BACKEND_IP .env.local 2>/dev/null | cut -d'=' -f2 || echo "10.144.43.24") || echo "$(RED)❌ Cannot ping laptop from device$(NC)"
+
+debug-logs: ## Show recent React Native logs
+	@echo "$(BLUE)📝 Recent React Native logs:$(NC)"
+	adb logcat -s ReactNativeJS:V -d -T 10 2>/dev/null || echo "No recent React Native logs found"
+
+debug-reload: ## Reload the React Native app
+	@echo "$(BLUE)🔄 Reloading app...$(NC)"
+	adb shell am broadcast -a "com.facebook.react.devsupport.RELOAD"
+	@echo "$(GREEN)✅ App reload signal sent$(NC)"
+
+debug-all: debug-device debug-metro debug-network debug-logs ## Run all debug checks
+	@echo "$(GREEN)✅ Debug check complete!$(NC)"
