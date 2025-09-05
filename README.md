@@ -17,6 +17,85 @@ A React Native application implementing authentication with login, signup, and l
 - **Centralized Validation**: Validation logic centralized in ViewModel layer
 - **TypeScript**: Full type safety throughout the application
 
+## Development Tools
+
+This project includes comprehensive development tools for efficient React Native development:
+
+### Makefile Commands
+
+Use the provided Makefile for common development tasks:
+
+```bash
+# Show all available commands
+make help
+
+# Quick development start
+make dev          # Clean caches and run Android
+make fresh        # Full reset and run Android
+
+# Cache management
+make clean        # Clean common caches
+make clean-all    # Clean all caches
+make storage-info # Show storage usage
+
+# Development workflow
+make start        # Start Metro server
+make run-android  # Run on Android
+make run-ios      # Run on iOS
+
+# Code quality
+make lint         # Run ESLint
+make format       # Format with Prettier
+make test         # Run tests
+
+# Network & Backend Configuration
+make detect-ip           # Detect laptop's IP
+make auto-set-ip         # Auto-set IP for phone connectivity
+make set-backend-ip IP=192.168.1.100  # Manually set IP
+make show-backend-config # Show current backend config
+```
+
+### Development Helper Script
+
+For even quicker access to common commands:
+
+```bash
+# Quick commands
+./dev.sh dev      # Start development
+./dev.sh fresh    # Fresh project start
+./dev.sh clean    # Clean caches
+./dev.sh build    # Build APK
+./dev.sh storage  # Show storage info
+
+# Network configuration
+./dev.sh ip       # Detect IP
+./dev.sh auto-ip  # Auto-set IP for phone
+./dev.sh config   # Show backend config
+
+# Show all options
+./dev.sh help
+```
+
+### Phone Connectivity Setup
+
+To connect your phone to the backend running on your laptop:
+
+```bash
+# Auto-detect and set your laptop's IP
+make auto-set-ip
+# or
+./dev.sh auto-ip
+
+# Verify the configuration
+make show-backend-config
+# or
+./dev.sh config
+```
+
+This will create a `.env.local` file with your laptop's IP address, allowing your phone to connect to the backend at `http://[YOUR_IP]:8080`.
+
+See [MAKEFILE_README.md](MAKEFILE_README.md) for detailed documentation of all available commands.
+
 ## Usage
 
 ![signup gif](https://github.com/user-attachments/assets/1b9a9a82-34b9-434e-9aca-e02b99705a39)
