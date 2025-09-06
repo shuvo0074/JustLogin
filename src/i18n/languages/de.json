@@ -33,7 +33,20 @@
   },
   "home": {
     "title": "Willkommen!",
-    "welcome": "Willkommen!"
+    "welcome": "Willkommen!",
+    "welcomeBack": "Willkommen zurück, {name}!",
+    "quickStats": "Schnelle Statistiken",
+    "thisWeek": "Diese Woche",
+    "totalWorkouts": "Gesamte Workouts",
+    "daysLeft": "Tage übrig",
+    "dayStreak": "Tage-Serie",
+    "nextClass": "Nächste Klasse",
+    "upcomingClasses": "Kommende Klassen",
+    "recentAchievements": "Letzte Erfolge",
+    "with": "mit",
+    "tomorrow": "Morgen",
+    "wednesday": "Mittwoch",
+    "friday": "Freitag"
   },
   "profile": {
     "title": "Profil",

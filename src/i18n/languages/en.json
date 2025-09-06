@@ -33,7 +33,20 @@
   },
   "home": {
     "title": "Welcome!",
-    "welcome": "Welcome!"
+    "welcome": "Welcome!",
+    "welcomeBack": "Welcome back, {name}!",
+    "quickStats": "Quick Stats",
+    "thisWeek": "This Week",
+    "totalWorkouts": "Total Workouts",
+    "daysLeft": "Days Left",
+    "dayStreak": "Day Streak",
+    "nextClass": "Next Class",
+    "upcomingClasses": "Upcoming Classes",
+    "recentAchievements": "Recent Achievements",
+    "with": "with",
+    "tomorrow": "Tomorrow",
+    "wednesday": "Wednesday",
+    "friday": "Friday"
   },
   "profile": {
     "title": "Profile",

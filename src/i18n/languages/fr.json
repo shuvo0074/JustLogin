@@ -33,7 +33,20 @@
   },
   "home": {
     "title": "Bienvenue !",
-    "welcome": "Bienvenue !"
+    "welcome": "Bienvenue !",
+    "welcomeBack": "Bon retour, {name} !",
+    "quickStats": "Statistiques rapides",
+    "thisWeek": "Cette semaine",
+    "totalWorkouts": "Total des entraînements",
+    "daysLeft": "Jours restants",
+    "dayStreak": "Série de jours",
+    "nextClass": "Prochain cours",
+    "upcomingClasses": "Cours à venir",
+    "recentAchievements": "Réalisations récentes",
+    "with": "avec",
+    "tomorrow": "Demain",
+    "wednesday": "Mercredi",
+    "friday": "Vendredi"
   },
   "profile": {
     "title": "Profil",

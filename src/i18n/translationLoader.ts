@@ -40,6 +40,19 @@ export interface Translations {
   home: {
     title: string;
     welcome: string;
+    welcomeBack: string;
+    quickStats: string;
+    thisWeek: string;
+    totalWorkouts: string;
+    daysLeft: string;
+    dayStreak: string;
+    nextClass: string;
+    upcomingClasses: string;
+    recentAchievements: string;
+    with: string;
+    tomorrow: string;
+    wednesday: string;
+    friday: string;
   };
   profile: {
     title: string;
@@ -139,6 +152,19 @@ export interface FlattenedTranslations {
   // Home Screen
   homeTitle: string;
   welcome: string;
+  welcomeBack: string;
+  quickStats: string;
+  thisWeek: string;
+  totalWorkouts: string;
+  daysLeft: string;
+  dayStreak: string;
+  nextClass: string;
+  upcomingClasses: string;
+  recentAchievements: string;
+  with: string;
+  tomorrow: string;
+  wednesday: string;
+  friday: string;
   
   // Profile Screen
   profileTitle: string;
@@ -232,6 +258,19 @@ export const flattenTranslations = (translations: Translations): FlattenedTransl
     // Home Screen
     homeTitle: translations.home.title,
     welcome: translations.home.welcome,
+    welcomeBack: translations.home.welcomeBack,
+    quickStats: translations.home.quickStats,
+    thisWeek: translations.home.thisWeek,
+    totalWorkouts: translations.home.totalWorkouts,
+    daysLeft: translations.home.daysLeft,
+    dayStreak: translations.home.dayStreak,
+    nextClass: translations.home.nextClass,
+    upcomingClasses: translations.home.upcomingClasses,
+    recentAchievements: translations.home.recentAchievements,
+    with: translations.home.with,
+    tomorrow: translations.home.tomorrow,
+    wednesday: translations.home.wednesday,
+    friday: translations.home.friday,
     
     // Profile Screen
     profileTitle: translations.profile.title,
