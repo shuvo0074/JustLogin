@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 30,
     padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#e96315',

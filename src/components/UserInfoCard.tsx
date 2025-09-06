@@ -73,30 +73,38 @@ export const UserInfoCard: React.FC<UserInfoCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     padding: 20,
     borderRadius: 12,
     marginBottom: 30,
     borderWidth: 1,
-    borderColor: '#e96315',
+    borderColor: 'rgba(233, 99, 21, 0.6)',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+    // Glossy effect
+    overflow: 'hidden',
   },
   label: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333333',
+    color: '#ffffff',
     marginBottom: 5,
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   value: {
     fontSize: 18,
-    color: '#333333',
+    color: '#ffffff',
     marginBottom: 15,
+    textShadowColor: 'rgba(0, 0, 0, 0.8)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
 }); 
