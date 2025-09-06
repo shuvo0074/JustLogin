@@ -15,6 +15,8 @@ describe('AuthService', () => {
     // Clear all mocks before each test
     jest.clearAllMocks();
     AsyncStorage.clear();
+    // Reset fetch mock completely
+    (global.fetch as jest.Mock).mockReset();
   });
 
   describe('login', () => {
