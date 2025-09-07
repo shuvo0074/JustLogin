@@ -109,15 +109,16 @@ help: ## Show this help message
 # Cache Cleaning Tasks
 clean-metro: ## Clean Metro bundler cache
 	@echo "🧹 Cleaning Metro cache..."
-	@npx react-native start --reset-cache --no-interactive || true
 	@rm -rf /tmp/metro-cache
 	@rm -rf /tmp/haste-map-*
+	@rm -rf /tmp/metro-*
+	@rm -rf node_modules/.cache/metro-*
+	@rm -rf $HOME/.metro
 	@echo "✅ Metro cache cleaned"
 
 clean-gradle: ## Clean Android Gradle cache
 	@echo "🧹 Cleaning Gradle cache..."
 	@cd android && ./gradlew clean
-	@cd android && ./gradlew cleanBuildCache
 	@rm -rf ~/.gradle/caches
 	@rm -rf android/.gradle
 	@rm -rf android/build
