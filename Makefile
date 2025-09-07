@@ -1,6 +1,13 @@
 # React Native Gym Mobile App - Development Makefile
 # This Makefile provides convenient commands for development, building, and maintenance
 
+# Color codes for output
+RED=\033[0;31m
+GREEN=\033[0;32m
+YELLOW=\033[1;33m
+BLUE=\033[0;34m
+NC=\033[0m # No Color
+
 .PHONY: help clean clean-all clean-metro clean-gradle clean-node clean-watchman \
         install install-android install-ios \
         run-android run-ios run-android-release run-ios-release \
@@ -15,7 +22,7 @@
         git-clean git-status \
         reset reset-hard \
         detect-ip set-backend-ip auto-set-ip reset-backend-ip show-backend-config \
-        build-release install-release run-release fix-localhost-errors \
+        build-release install-release run-release fix-localhost-errors reset-gradle \
         debug-device debug-metro debug-network debug-logs debug-reload debug-all \
         help
 
@@ -89,6 +96,7 @@ help: ## Show this help message
 	@echo "  check-deps           Check for outdated dependencies"
 	@echo "  reset                Reset project (clean caches, reinstall)"
 	@echo "  reset-hard           Hard reset (remove node_modules, clean all)"
+	@echo "  reset-gradle         Complete Gradle cache reset (for corruption issues)"
 	@echo ""
 	@echo "Network & Backend:"
 	@echo "  detect-ip            Detect laptop's local IP address"
@@ -118,11 +126,11 @@ clean-metro: ## Clean Metro bundler cache
 
 clean-gradle: ## Clean Android Gradle cache
 	@echo "🧹 Cleaning Gradle cache..."
-	@cd android && ./gradlew clean
 	@rm -rf ~/.gradle/caches
 	@rm -rf android/.gradle
 	@rm -rf android/build
 	@rm -rf android/app/build
+	@cd android && ./gradlew clean 2>/dev/null || echo "⚠️  Gradle clean failed, but cache directories cleaned"
 	@echo "✅ Gradle cache cleaned"
 
 clean-node: ## Clean Node.js cache
@@ -523,8 +531,14 @@ run-release: build-release install-release ## Build, install and run release ver
 	adb shell am start -n com.contextlogin/.MainActivity
 	@echo "$(GREEN)🎉 App is running in production mode! No more localhost:8081 errors!$(NC)"
 
-fix-localhost-errors: run-release ## Alias for run-release (fixes localhost:8081 Metro connection errors)
-	@echo "$(GREEN)✅ localhost:8081 errors should now be fixed!$(NC)"
+reset-gradle: ## Complete Gradle cache reset (use when Gradle is corrupted)
+	@echo "$(RED)⚠️  Performing complete Gradle reset...$(NC)"
+	@pkill -f gradle 2>/dev/null || true
+	@rm -rf ~/.gradle
+	@rm -rf android/.gradle
+	@rm -rf android/build
+	@rm -rf android/app/build
+	@echo "$(GREEN)✅ Complete Gradle reset done. Run 'make clean-gradle' next.$(NC)"
 
 # ============================================================================
 # DEBUGGING COMMANDS
