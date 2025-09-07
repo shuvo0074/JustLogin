@@ -22,9 +22,7 @@ NC=\033[0m # No Color
         git-clean git-status \
         reset reset-hard \
         detect-ip set-backend-ip auto-set-ip reset-backend-ip show-backend-config \
-        build-release install-release run-release fix-localhost-errors reset-gradle \
-        debug-device debug-metro debug-network debug-logs debug-reload debug-all \
-        help
+        debug-device debug-metro debug-network debug-logs debug-reload debug-all
 
 # Default target
 help: ## Show this help message
@@ -48,13 +46,13 @@ help: ## Show this help message
 	@echo "Running:"
 	@echo "  run-android          Run on Android device/emulator"
 	@echo "  run-ios              Run on iOS simulator"
-	@echo "  run-android-release  Run Android release build"
+	@echo "  run-android-release  Run Android release build (production, no Metro dependency)"
 	@echo "  run-ios-release      Run iOS release build"
 	@echo ""
 	@echo "Building:"
 	@echo "  build-android        Build Android APK"
 	@echo "  build-ios            Build iOS app"
-	@echo "  build-android-release Build Android release APK"
+	@echo "  build-android-release Build Android release APK (production, no Metro dependency)"
 	@echo "  build-ios-release    Build iOS release app"
 	@echo ""
 	@echo "Metro Server:"
@@ -96,11 +94,10 @@ help: ## Show this help message
 	@echo "  check-deps           Check for outdated dependencies"
 	@echo "  reset                Reset project (clean caches, reinstall)"
 	@echo "  reset-hard           Hard reset (remove node_modules, clean all)"
-	@echo "  reset-gradle         Complete Gradle cache reset (for corruption issues)"
 	@echo ""
 	@echo "Network & Backend:"
 	@echo "  detect-ip            Detect laptop's local IP address"
-	@echo "  set-backend-ip       Set backend IP for phone connectivity"
+	@echo "  set-backend-ip       Set backend IP for phone connectivity (usage: make set-backend-ip IP=192.168.1.100)"
 	@echo "  auto-set-ip          Auto-detect and set laptop's IP"
 	@echo "  reset-backend-ip     Reset backend IP to localhost"
 	@echo "  show-backend-config  Show current backend configuration"
@@ -474,25 +471,75 @@ reset-hard: ## Hard reset (remove node_modules, clean all)
 # Network and Backend Configuration
 detect-ip: ## Detect and display the laptop's local IP address
 	@echo "🔍 Detecting local IP address..."
-	@ip route get 1 | awk '{print $$7}' | head -1
+	@IP=$$(ip route get 1 2>/dev/null | awk '{print $$7}' | head -1 2>/dev/null || \
+		hostname -I 2>/dev/null | awk '{print $$1}' 2>/dev/null || \
+		ifconfig 2>/dev/null | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -1 | awk '{print $$2}' 2>/dev/null || \
+		echo "Unable to detect IP"); \
+	if [ "$$IP" = "Unable to detect IP" ]; then \
+		echo "❌ Could not detect IP address. Try one of these methods:"; \
+		echo "   - Linux: ip route get 1"; \
+		echo "   - Alternative: hostname -I"; \
+		echo "   - Fallback: ifconfig"; \
+		exit 1; \
+	else \
+		echo "🌐 Detected IP: $$IP"; \
+	fi
 
 set-backend-ip: ## Set backend IP for phone connectivity (usage: make set-backend-ip IP=192.168.1.100)
 	@echo "🌐 Setting backend IP to $(IP)..."
 	@if [ -z "$(IP)" ]; then \
-		echo "❌ Error: Please provide IP address. Usage: make set-backend-ip IP=192.168.1.100"; \
+		echo "❌ Error: Please provide IP address."; \
+		echo "💡 Usage: make set-backend-ip IP=192.168.1.100"; \
 		exit 1; \
 	fi
-	@echo "REACT_NATIVE_BACKEND_IP=$(IP)" > .env.local
+	@echo "# Environment Variables for Gym Mobile App" > .env.local
+	@echo "" >> .env.local
+	@echo "# API Configuration" >> .env.local
+	@echo "API_BASE_URL=http://$(IP):8080/api" >> .env.local
+	@echo "API_KEY=dev_api_key_123" >> .env.local
+	@echo "" >> .env.local
+	@echo "# Authentication" >> .env.local
+	@echo "AUTH_SECRET=dev_auth_secret_456" >> .env.local
+	@echo "" >> .env.local
+	@echo "# Other settings" >> .env.local
+	@echo "DEBUG=true" >> .env.local
+	@echo "LOG_LEVEL=debug" >> .env.local
+	@echo "" >> .env.local
+	@echo "# Backend IP override (for dynamic IP changes)" >> .env.local
+	@echo "REACT_NATIVE_BACKEND_IP=$(IP)" >> .env.local
 	@echo "✅ Backend IP set to $(IP) in .env.local"
-	@echo "📱 Your phone can now connect to: http://$(IP):8080"
+	@echo "📱 Your phone can now connect to: http://$(IP):8080/api"
 
 auto-set-ip: ## Automatically detect and set the laptop's IP for phone connectivity
 	@echo "🔍 Auto-detecting IP address..."
-	@IP=$$(ip route get 1 | awk '{print $$7}' | head -1); \
+	@IP=$$(ip route get 1 2>/dev/null | awk '{print $$7}' | head -1 2>/dev/null || \
+		hostname -I 2>/dev/null | awk '{print $$1}' 2>/dev/null || \
+		ifconfig 2>/dev/null | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -1 | awk '{print $$2}' 2>/dev/null || \
+		echo "Unable to detect IP"); \
+	if [ "$$IP" = "Unable to detect IP" ]; then \
+		echo "❌ Could not auto-detect IP address."; \
+		echo "💡 Try: make detect-ip"; \
+		echo "💡 Or manually: make set-backend-ip IP=192.168.1.100"; \
+		exit 1; \
+	fi; \
 	echo "🌐 Detected IP: $$IP"; \
-	echo "REACT_NATIVE_BACKEND_IP=$$IP" > .env.local; \
+	echo "# Environment Variables for Gym Mobile App" > .env.local; \
+	echo "" >> .env.local; \
+	echo "# API Configuration" >> .env.local; \
+	echo "API_BASE_URL=http://$$IP:8080/api" >> .env.local; \
+	echo "API_KEY=dev_api_key_123" >> .env.local; \
+	echo "" >> .env.local; \
+	echo "# Authentication" >> .env.local; \
+	echo "AUTH_SECRET=dev_auth_secret_456" >> .env.local; \
+	echo "" >> .env.local; \
+	echo "# Other settings" >> .env.local; \
+	echo "DEBUG=true" >> .env.local; \
+	echo "LOG_LEVEL=debug" >> .env.local; \
+	echo "" >> .env.local; \
+	echo "# Backend IP override (for dynamic IP changes)" >> .env.local; \
+	echo "REACT_NATIVE_BACKEND_IP=$$IP" >> .env.local; \
 	echo "✅ Backend IP set to $$IP in .env.local"; \
-	echo "📱 Your phone can now connect to: http://$$IP:8080"
+	echo "📱 Your phone can now connect to: http://$$IP:8080/api"
 
 reset-backend-ip: ## Reset backend IP to default (localhost)
 	@echo "🔄 Resetting backend IP to localhost..."
@@ -515,30 +562,8 @@ show-backend-config: ## Show current backend configuration
 # PRODUCTION BUILD COMMANDS (FIX FOR localhost:8081 ERRORS)
 # ============================================================================
 
-build-release: ## Build release APK (production mode, no Metro dependency)
-	@echo "$(GREEN)🔨 Building release APK (production mode)...$(NC)"
-	cd android && ./gradlew assembleRelease
-	@echo "$(GREEN)✅ Release APK built successfully! (No localhost:8081 errors)$(NC)"
-
-install-release: ## Install release APK
-	@echo "$(GREEN)📱 Installing release APK...$(NC)"
-	adb install -r android/app/build/outputs/apk/release/app-release.apk
-	@echo "$(GREEN)✅ Release APK installed$(NC)"
-
-run-release: build-release install-release ## Build, install and run release version (FIXES localhost:8081 errors)
-	@echo "$(GREEN)🚀 Starting release app (production mode, no Metro dependency)...$(NC)"
-	adb shell am force-stop com.contextlogin
-	adb shell am start -n com.contextlogin/.MainActivity
-	@echo "$(GREEN)🎉 App is running in production mode! No more localhost:8081 errors!$(NC)"
-
-reset-gradle: ## Complete Gradle cache reset (use when Gradle is corrupted)
-	@echo "$(RED)⚠️  Performing complete Gradle reset...$(NC)"
-	@pkill -f gradle 2>/dev/null || true
-	@rm -rf ~/.gradle
-	@rm -rf android/.gradle
-	@rm -rf android/build
-	@rm -rf android/app/build
-	@echo "$(GREEN)✅ Complete Gradle reset done. Run 'make clean-gradle' next.$(NC)"
+# Note: Use build-android-release, run-android-release for production builds
+# These avoid Metro dependency and localhost:8081 errors
 
 # ============================================================================
 # DEBUGGING COMMANDS
