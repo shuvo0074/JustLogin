@@ -258,6 +258,70 @@ class AuthService {
     }
   }
 
+  // Fetch user profile from API
+  private async fetchUserProfile(): Promise<User | null> {
+    try {
+      const token = await this.getStoredToken();
+
+      if (!token) {
+        return null;
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+      const response = await fetch(`${this.baseUrl}/profile`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          // Token is invalid, clear stored data
+          await this.clearStoredData();
+          return null;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+
+      // Extract user data from profile response
+      const user: User = {
+        id: data.data?.id || data.id || data.data?.user_id || Date.now().toString(),
+        email: data.data?.email || data.email || '',
+        name: data.data?.name || data.name || 'User',
+        createdAt: data.data?.created_at || data.created_at || new Date().toISOString(),
+        updatedAt: data.data?.updated_at || data.updated_at || new Date().toISOString(),
+        ...data,
+      };
+
+      // Update stored user data with fresh data from API
+      await this.storeUser(user);
+
+      return user;
+    } catch (error) {
+      console.error('Fetch profile error:', error);
+
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          throw new Error('Request timed out. Please check your internet connection.');
+        }
+        if (error.message.includes('fetch')) {
+          throw new Error('Unable to connect to server. Please check your network connection.');
+        }
+      }
+
+      throw error;
+    }
+  }
+
   async getCurrentUser(): Promise<User | null> {
     try {
       const token = await this.getStoredToken();
@@ -266,15 +330,16 @@ class AuthService {
         return null;
       }
 
-      // Return stored user data since profile API is not available
-      const storedUser = await this.getStoredUser();
-      console.log('Returning stored user data:', storedUser);
-      return storedUser;
+      // Fetch fresh user data from profile API
+      const userProfile = await this.fetchUserProfile();
+      console.log('Returning profile data from API:', userProfile);
+      return userProfile;
     } catch (error) {
       console.error('Get current user error:', error);
       // If API fails, fall back to stored user data
       try {
         const storedUser = await this.getStoredUser();
+        console.log('Falling back to stored user data:', storedUser);
         return storedUser;
       } catch (fallbackError) {
         console.error('Fallback to stored user failed:', fallbackError);
