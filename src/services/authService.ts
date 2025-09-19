@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_BASE_URL } from '../config/env';
+import { API_BASE_URL, ENVIRONMENT } from '../config/env';
 import { LoginCredentials, SignupCredentials, AuthResponse, User } from '../types/auth';
 
 // API service with real API calls
@@ -17,7 +17,7 @@ class AuthService {
   constructor() {
     // Log the runtime API base URL so we can verify what the app will talk to
     try {
-      console.log('[AuthService] runtime API_BASE_URL =', this.baseUrl);
+      console.log('[AuthService] runtime API_BASE_URL =', this.baseUrl, ENVIRONMENT);
     } catch (e) {
       // swallow any logging errors to avoid crashing startup
     }
@@ -77,6 +77,11 @@ class AuthService {
   // Register user with real API call
   async register(credentials: SignupCredentials): Promise<AuthResponse> {
     try {
+      // Validate credentials
+      if (!credentials.email || !credentials.password || !credentials.name) {
+        throw new Error('Email, password, and name are required');
+      }
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
@@ -95,19 +100,15 @@ class AuthService {
       });
 
       clearTimeout(timeoutId);
-      console.log(response, "=--==--=");
-
+      const data = await response.json()
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
       }
-
-      const data = await response.json();
 
       // Extract user data and token from API response
       const user: User = {
-        id: data.data.id || data.data.user_id || Date.now().toString(),
+        id: data.data.id || data.data.user_id || `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         email: data.data.email || credentials.email,
         name: data.data.name || credentials.name,
         createdAt: data.data.created_at || new Date().toISOString(),
@@ -147,6 +148,11 @@ class AuthService {
   // Login user with real API call
   async loginUser(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
+      // Validate credentials
+      if (!credentials.email || !credentials.password) {
+        throw new Error('Email and password are required');
+      }
+
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
@@ -161,17 +167,15 @@ class AuthService {
         }),
         signal: controller.signal,
       });
+      const data = await response.json()
+
+      console.log(data, "===");
 
       clearTimeout(timeoutId);
-      console.log(response, "Login response");
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
       }
-
-      const data = await response.json();
-
       // Extract token from login response
       const token = data.data.token || data.token || `jwt_token_${Date.now()}`;
 
