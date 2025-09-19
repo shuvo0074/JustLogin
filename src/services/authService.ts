@@ -115,7 +115,7 @@ class AuthService {
         updatedAt: data.data.updated_at || new Date().toISOString(),
       };
 
-      const token = data.data.token || data.token || `jwt_token_${Date.now()}`;
+      const token = data.data.token || data.token;
 
       const authResponse: AuthResponse = {
         user,
@@ -177,7 +177,7 @@ class AuthService {
         throw new Error(data.message || `HTTP error! status: ${response.status}`);
       }
       // Extract token from login response
-      const token = data.data.token || data.token || `jwt_token_${Date.now()}`;
+      const token = data.data.token || data.token;
 
       // Store token first
       await this.storeToken(token);
