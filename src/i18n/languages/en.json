@@ -100,5 +100,12 @@
     "userIdLabel": "User ID:",
     "createdLabel": "Created:",
     "updatedLabel": "Updated:"
+  },
+  "business": {
+    "selectedBusiness": "Selected Business:",
+    "selectBusiness": "Select a business",
+    "selectBusinessTitle": "Select Business",
+    "loadingBusinesses": "Loading businesses...",
+    "noBusinessesAvailable": "No businesses available"
   }
 }

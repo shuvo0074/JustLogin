@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import type { AppDispatch } from '../store';
 import { selectBusinesses, selectSelectedBusiness, selectBusinessesLoading, setSelectedBusiness } from '../store/slices/businessesSlice';
 import { Business } from '../types/business';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface BusinessDropdownProps {
   style?: any;
@@ -22,6 +23,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({ style }) => {
   const businesses = useSelector(selectBusinesses);
   const selectedBusiness = useSelector(selectSelectedBusiness);
   const isLoading = useSelector(selectBusinessesLoading);
+  const { t } = useLanguage();
   
   const [isOpen, setIsOpen] = useState(false);
 
@@ -59,7 +61,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({ style }) => {
     return (
       <View style={[styles.container, style]}>
         <ActivityIndicator size="small" color="#007AFF" />
-        <Text style={styles.loadingText}>Loading businesses...</Text>
+        <Text style={styles.loadingText}>{t.businessLoadingBusinesses}</Text>
       </View>
     );
   }
@@ -67,7 +69,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({ style }) => {
   if (businesses.length === 0) {
     return (
       <View style={[styles.container, style]}>
-        <Text style={styles.noBusinessesText}>No businesses available</Text>
+        <Text style={styles.noBusinessesText}>{t.businessNoBusinessesAvailable}</Text>
       </View>
     );
   }
@@ -80,9 +82,9 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({ style }) => {
       >
         <View style={styles.buttonContent}>
           <View style={styles.buttonTextContainer}>
-            <Text style={styles.buttonLabel}>Current Business:</Text>
+            <Text style={styles.buttonLabel}>{t.businessSelectedBusiness}</Text>
             <Text style={styles.buttonText}>
-              {selectedBusiness?.name || 'Select a business'}
+              {selectedBusiness?.name || t.businessSelectBusiness}
             </Text>
           </View>
           <Text style={styles.arrow}>▼</Text>
@@ -102,7 +104,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({ style }) => {
         >
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Select Business</Text>
+              <Text style={styles.modalTitle}>{t.businessSelectBusinessTitle}</Text>
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => setIsOpen(false)}

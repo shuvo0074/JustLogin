@@ -107,6 +107,13 @@ export interface Translations {
     createdLabel: string;
     updatedLabel: string;
   };
+  business: {
+    selectedBusiness: string;
+    selectBusiness: string;
+    selectBusinessTitle: string;
+    loadingBusinesses: string;
+    noBusinessesAvailable: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -218,6 +225,13 @@ export interface FlattenedTranslations {
   userIdLabel: string;
   createdLabel: string;
   updatedLabel: string;
+  
+  // Business
+  businessSelectedBusiness: string;
+  businessSelectBusiness: string;
+  businessSelectBusinessTitle: string;
+  businessLoadingBusinesses: string;
+  businessNoBusinessesAvailable: string;
 }
 
 // Function to flatten nested translations for backward compatibility
@@ -324,5 +338,12 @@ export const flattenTranslations = (translations: Translations): FlattenedTransl
     userIdLabel: translations.userInfo.userIdLabel,
     createdLabel: translations.userInfo.createdLabel,
     updatedLabel: translations.userInfo.updatedLabel,
+    
+    // Business
+    businessSelectedBusiness: translations.business.selectedBusiness,
+    businessSelectBusiness: translations.business.selectBusiness,
+    businessSelectBusinessTitle: translations.business.selectBusinessTitle,
+    businessLoadingBusinesses: translations.business.loadingBusinesses,
+    businessNoBusinessesAvailable: translations.business.noBusinessesAvailable,
   };
 };
