@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { authService } from '../../services/authService';
 import { LoginCredentials, SignupCredentials, User, AuthResponse } from '../../types/auth';
+import { fetchBusinesses, clearBusinesses } from './businessesSlice';
 
 // Initial state (keeping exact same structure)
 interface AuthState {
@@ -97,24 +98,39 @@ const validateSignupForm = (name: string, email: string, password: string, confi
 // Async thunks
 export const login = createAsyncThunk(
   'auth/login',
-  async (credentials: LoginCredentials): Promise<AuthResponse> => {
+  async (credentials: LoginCredentials, { dispatch }): Promise<AuthResponse> => {
     const response = await authService.login(credentials);
+    
+    // Fetch businesses after successful login (with delay to ensure token is set)
+    setTimeout(() => {
+      dispatch(fetchBusinesses({ page: 1, limit: 20 }));
+    }, 1000);
+    
     return response;
   }
 );
 
 export const signup = createAsyncThunk(
   'auth/signup',
-  async (credentials: SignupCredentials): Promise<AuthResponse> => {
+  async (credentials: SignupCredentials, { dispatch }): Promise<AuthResponse> => {
     const response = await authService.signup(credentials);
+    
+    // Fetch businesses after successful signup (with delay to ensure token is set)
+    setTimeout(() => {
+      dispatch(fetchBusinesses({ page: 1, limit: 20 }));
+    }, 1000);
+    
     return response;
   }
 );
 
 export const logout = createAsyncThunk(
   'auth/logout',
-  async (): Promise<void> => {
+  async (_, { dispatch }): Promise<void> => {
     await authService.logout();
+    
+    // Clear businesses data on logout
+    dispatch(clearBusinesses());
   }
 );
 
@@ -123,6 +139,14 @@ export const checkAuthStatus = createAsyncThunk(
   async (_, { dispatch }): Promise<User | null> => {
     try {
       const user = await authService.getCurrentUser();
+      
+      // If user is already logged in, fetch businesses
+      if (user) {
+        setTimeout(() => {
+          dispatch(fetchBusinesses({ page: 1, limit: 20 }));
+        }, 1000);
+      }
+      
       return user;
     } catch (error) {
       // If UNAUTHORIZED error, dispatch logout to clear state
