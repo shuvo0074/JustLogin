@@ -11,6 +11,7 @@ const initialState: BusinessesState = {
   page: 1,
   limit: 20,
   hasMore: true,
+  selectedBusiness: null,
 };
 
 // Async thunks
@@ -126,6 +127,9 @@ const businessesSlice = createSlice({
       state.businesses = state.businesses.filter(business => business.id !== action.payload);
       state.total = Math.max(0, state.total - 1);
     },
+    setSelectedBusiness: (state, action: PayloadAction<Business | null>) => {
+      state.selectedBusiness = action.payload;
+    },
   },
   extraReducers: (builder) => {
     // Fetch businesses
@@ -142,6 +146,11 @@ const businessesSlice = createSlice({
         state.limit = action.payload.limit;
         state.hasMore = state.businesses.length < state.total;
         state.error = null;
+        
+        // Auto-select first business if none is selected
+        if (action.payload.businesses.length > 0 && !state.selectedBusiness) {
+          state.selectedBusiness = action.payload.businesses[0];
+        }
       })
       .addCase(fetchBusinesses.rejected, (state, action) => {
         state.isLoading = false;
@@ -275,6 +284,11 @@ const businessesSlice = createSlice({
         state.limit = action.payload.limit;
         state.hasMore = state.businesses.length < state.total;
         state.error = null;
+        
+        // Auto-select first business if none is selected
+        if (action.payload.businesses.length > 0 && !state.selectedBusiness) {
+          state.selectedBusiness = action.payload.businesses[0];
+        }
       })
       .addCase(fetchBusinessesWithDelay.rejected, (state, action) => {
         state.isLoading = false;
@@ -292,6 +306,7 @@ export const {
     addBusiness,
     updateBusinessLocal,
     removeBusinessLocal,
+    setSelectedBusiness,
 } = businessesSlice.actions;
 
 // Export selectors
@@ -304,5 +319,6 @@ export const selectBusinessesLimit = (state: { businesses: BusinessesState }) =>
 export const selectBusinessesHasMore = (state: { businesses: BusinessesState }) => state.businesses.hasMore;
 export const selectBusinessById = (id: string) => (state: { businesses: BusinessesState }) => 
   state.businesses.businesses.find(business => business.id === id);
+export const selectSelectedBusiness = (state: { businesses: BusinessesState }) => state.businesses.selectedBusiness;
 
 export default businessesSlice.reducer;

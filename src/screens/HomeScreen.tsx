@@ -13,6 +13,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../contexts/LanguageContext';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { PageTitle } from '../components/PageTitle';
+import BusinessDropdown from '../components/BusinessDropdown';
 
 export const HomeScreen: React.FC = () => {
   const { user, isLoading } = useAuth();
@@ -54,6 +55,8 @@ export const HomeScreen: React.FC = () => {
       >
         <View style={styles.overlay}>
           <PageTitle title={t.welcomeBack.replace('{name}', user?.name || 'Member')} style={styles.titleOverlay} />
+          {/* Business Selection Dropdown */}
+          <BusinessDropdown style={styles.businessDropdown} />
         </View>
       </ImageBackground>
       
@@ -139,6 +142,16 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.8)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
+    marginTop: 30,
+    marginBottom: 0
+  },
+  businessDropdown: {
+    marginTop: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderRadius: 8,
+    padding: 10,
+    width: Dimensions.get('screen').width - 40,
+    alignSelf: 'center',
   },
   scrollView: {
     flex: 1,

@@ -89,7 +89,7 @@ class BusinessService {
       console.log('Businesses API Response:', data);
 
       // Extract businesses data from API response
-      const businesses: Business[] = data.data?.businesses || data.businesses || [];
+      const businesses: Business[] = data || data?.businesses || [];
       const total = data.data?.total || data.total || businesses.length;
       const currentPage = data.data?.page || data.page || page;
       const currentLimit = data.data?.limit || data.limit || limit;

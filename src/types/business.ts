@@ -28,4 +28,5 @@ export interface BusinessesState {
   page: number;
   limit: number;
   hasMore: boolean;
+  selectedBusiness: Business | null;
 }
